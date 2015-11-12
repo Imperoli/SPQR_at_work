@@ -47,16 +47,16 @@ bool RockinPNPActionServer::getRobotPose(std::string robotname, double &x, doubl
 bool RockinPNPActionServer::getLocationPosition(string loc, float &GX, float &GY, float &Gtheta) {
 
 
-    if (loc=="home") {
-        GX = 2.0; GY = 2.0; Gtheta=0;
+    if (loc=="Workstation1") {
+        GX = -3.05; GY = -0.95; Gtheta=3.14159;
         ROS_INFO_STREAM("Location " << loc << " at " << GX  << " , " << GY);
     }
-    else if (loc=="Workstation_1") {
-        GX = 8.0; GY = 1.8; Gtheta=0;
+    else if (loc=="Workstation2") {
+        GX = -4.35; GY = -3.05; Gtheta=0.0;
         ROS_INFO_STREAM("Location " << loc << " at " << GX  << " , " << GY);      
     }
-    else if (loc=="Workstation_2") {
-        GX = 8.0; GY = 1.8; Gtheta=0;
+    else if (loc=="Workstation3") {
+        GX = -2.7; GY = -2.25; Gtheta=(3.14159/2);
         ROS_INFO_STREAM("Location " << loc << " at " << GX  << " , " << GY);      
     }
     else {
@@ -75,6 +75,7 @@ bool RockinPNPActionServer::getLocationPosition(string loc, float &GX, float &GY
 
 
 void RockinPNPActionServer::move(string params, bool *run) {
+  ROS_INFO("move started");
   float GX,GY,Gtheta;
   if (getLocationPosition(params,GX,GY,Gtheta)) {
     do_move(GX,GY,Gtheta,run);
@@ -92,8 +93,8 @@ void RockinPNPActionServer::wait(string params, bool *run)
     while (*run && sleeptime-->0)
         ros::Duration(0.2).sleep();
 */
-
-    ros::Duration(5).sleep();
+    ROS_INFO("Just waiting ...");
+    ros::Duration(50).sleep();
 /*
     if (*run)
         ROS_INFO("### Finished Wait");
@@ -104,7 +105,7 @@ void RockinPNPActionServer::wait(string params, bool *run)
 
 
 void RockinPNPActionServer::do_move(float GX, float GY, float GTh_RAD, bool *run) { // theta in degrees
-
+  ROS_INFO("do_move started");
   mtx_movebase.lock();
 
   if (ac_move==NULL) { //create the client only once
@@ -144,6 +145,16 @@ void RockinPNPActionServer::do_move(float GX, float GY, float GTh_RAD, bool *run
   
   ac_move->sendGoal(move_base_goal);
   ac_move->waitForResult();
+
+  if(ac_move->getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+  {
+    ROS_INFO("cannot move the base for some reason (step 1)");
+    string param = "PNPconditionsBuffer/goalReached";
+    handle.setParam(param, 0);
+  }else{
+    string param = "PNPconditionsBuffer/goalReached";
+    handle.setParam(param, 1);
+  }
 
 #if 0
   // Print result
