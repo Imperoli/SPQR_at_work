@@ -17,12 +17,19 @@ RockinPNPActionServer::RockinPNPActionServer(ros::NodeHandle n) : PNPActionServe
 
     register_action("wait",&RockinPNPActionServer::wait,this);
     register_action("move",&RockinPNPActionServer::move,this);
+    register_action("detection",&RockinPNPActionServer::detection,this);
+    register_action("grasp",&RockinPNPActionServer::grasp,this);
 
     listener = new tf::TransformListener();
 
     ac_move=NULL;
+    ac_detection=NULL;
+    ac_grasping=NULL;
 
     PNP_cond_pub = handle.advertise<std_msgs::String>(TOPIC_PNPCONDITION, 100);
+
+    computeTransformation("arm_base", "kinect_rgb_optical_frame", T_kinect2arm);
+  std::cout<<"T_kinect2arm:\n"<<T_kinect2arm.matrix()<<std::endl;
 
 }
 

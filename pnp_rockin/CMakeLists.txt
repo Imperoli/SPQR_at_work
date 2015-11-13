@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   pnp_ros
   tf
+  tf_conversions
+  eigen_conversions
 )
 
 catkin_package(

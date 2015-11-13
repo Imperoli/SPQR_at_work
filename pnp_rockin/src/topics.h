@@ -7,6 +7,8 @@
 #define TOPIC_LASER_OBSMAP "laser_obstacle_map"
 
 #define TOPIC_MOVE_BASE "goto"
+#define TOPIC_DETECTION_NODE "object_detection/detect_objects"
+#define TOPIC_GRASPING_NODE "arm_planner"
 #define TOPIC_TURN "turn"
 #define TOPIC_FOLLOWCORRIDOR "follow_corridor"
 #define TOPIC_SAY "say"

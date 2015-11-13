@@ -296,6 +296,7 @@ void action_cb(const rgbd_object_detection::DetectObjectsGoalConstPtr& goal)
   as->setAborted(result);
   tables_mtx.unlock();
   clusters_mtx.unlock();
+  //ROS_INFO("action_cb end");
 }
 
 int main(int argc, char** argv)
@@ -317,12 +318,14 @@ int main(int argc, char** argv)
   ros::Subscriber tables_sub = nh.subscribe(tables_topic, 1, tables_cb);
 
   computeTransformation("arm_base", "kinect_rgb_optical_frame", T_kinect_arm);
+  std::cout<<"T_kinect2arm:\n"<<T_kinect_arm.matrix()<<std::endl;
   
   flag_clusters=false; flag_tables=false;
   
   srv_client = nh.serviceClient<std_srvs::Empty>("accumulate_clouds");
   
   as =new actionlib::SimpleActionServer<rgbd_object_detection::DetectObjectsAction>(nh, "detect_objects", action_cb, false);
+  //ROS_INFO("#############  detect_objects action server started  ######################################################");
   as->start();
   
   ros::spin();

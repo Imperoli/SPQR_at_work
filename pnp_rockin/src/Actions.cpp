@@ -5,7 +5,8 @@
 #include "topics.h"
 
 #include <math.h>
-#include <Eigen/Dense>
+#include <tf_conversions/tf_eigen.h>
+#include <eigen_conversions/eigen_msg.h>
 
 #define RAD(a) ((a)/180.0*M_PI)
 #define DEG(a) ((a)*180.0/M_PI)
@@ -67,6 +68,49 @@ bool RockinPNPActionServer::getLocationPosition(string loc, float &GX, float &GY
     return true;
 }
 
+void RockinPNPActionServer::PoseArrayToEigen(const geometry_msgs::PoseArray& poses, std::vector<Eigen::Affine3d>& output)
+{
+  output.clear();
+  for(int i=0; i<poses.poses.size(); i++){
+    Eigen::Affine3d out;
+    tf::poseMsgToEigen(poses.poses[i],out);
+    output.push_back(out);
+  }
+}
+
+void RockinPNPActionServer::tf2Affine(tf::StampedTransform& tf, Eigen::Affine3d& T)
+{
+  tf::Vector3 o=tf.getOrigin();
+  tf::Quaternion q_tf=tf.getRotation();
+  Eigen::Quaterniond q(q_tf[3],q_tf[0],q_tf[1],q_tf[2]);
+  Eigen::Matrix3d R(q);
+  Eigen::Vector3d t(o[0],o[1],o[2]);
+  T.linear()=R; T.translation()=t;
+  
+}
+
+bool RockinPNPActionServer::computeTransformation(std::string target, std::string source, Eigen::Affine3d& T)
+{
+  //tf::TransformListener listener;
+  tf::StampedTransform transform;
+  for (int i=0; i<3;i++)
+  {
+    try
+    {
+      ros::Time now=ros::Time::now();
+      listener->waitForTransform( target, source, now, ros::Duration(.25));
+      listener->lookupTransform( target, source, now, transform);
+      //tf::transformTFToEigen(transform, T);
+      tf2Affine(transform, T);
+      return true;
+    }
+    catch (tf::TransformException ex)
+    {
+      ROS_ERROR("%s",ex.what());
+    }
+  }
+  return false;
+}
 
 
 /*
@@ -75,7 +119,7 @@ bool RockinPNPActionServer::getLocationPosition(string loc, float &GX, float &GY
 
 
 void RockinPNPActionServer::move(string params, bool *run) {
-  ROS_INFO("move started");
+  ROS_INFO("move started ...");
   float GX,GY,Gtheta;
   if (getLocationPosition(params,GX,GY,Gtheta)) {
     do_move(GX,GY,Gtheta,run);
@@ -94,7 +138,7 @@ void RockinPNPActionServer::wait(string params, bool *run)
         ros::Duration(0.2).sleep();
 */
     ROS_INFO("Just waiting ...");
-    ros::Duration(50).sleep();
+    ros::Duration(5).sleep();
 /*
     if (*run)
         ROS_INFO("### Finished Wait");
@@ -103,6 +147,74 @@ void RockinPNPActionServer::wait(string params, bool *run)
 */
 }
 
+void RockinPNPActionServer::detection(string params, bool *run) {
+  ROS_INFO("detection started ...");
+  detected_objects.poses.clear();
+  if (ac_detection==NULL) { //create the client only once
+    // Define the action client (true: we want to spin a thread)
+    ac_detection = new actionlib::SimpleActionClient<rgbd_object_detection::DetectObjectsAction>(TOPIC_DETECTION_NODE, true);
+
+    // Wait for the action server to come up
+    while(!ac_detection->waitForServer(ros::Duration(5.0))){
+      ROS_INFO("Waiting for ac_detection action server to come up");
+    }
+  }
+  //ROS_INFO("detection agent initialized ...");
+  rgbd_object_detection::DetectObjectsGoal goal;
+  ac_detection->sendGoal(goal);
+  ac_detection->waitForResult();
+
+  if(ac_detection->getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+  {
+    //ROS_INFO("cannot move the base for some reason (step 1)");
+    string param = "PNPconditionsBuffer/objDetected";
+    handle.setParam(param, 0);
+  }else{
+    string param = "PNPconditionsBuffer/objDetected";
+    handle.setParam(param, 1);
+    rgbd_object_detection::DetectObjectsResultConstPtr result;
+    result = ac_detection->getResult();
+    detected_objects = result->objects;
+  }
+
+}
+
+void RockinPNPActionServer::grasp(string params, bool *run) {
+  ROS_INFO("grasping started ...");
+  if (ac_grasping==NULL) { //create the client only once
+    // Define the action client (true: we want to spin a thread)
+    ac_grasping = new actionlib::SimpleActionClient<arm_planner::arm_planningAction>(TOPIC_GRASPING_NODE, true);
+
+    // Wait for the action server to come up
+    while(!ac_grasping->waitForServer(ros::Duration(5.0))){
+      //ROS_INFO("Waiting for move_base action server to come up");
+    }
+  }
+  arm_planner::arm_planningGoal goal;
+  geometry_msgs::PoseArray array;
+  std::vector<Eigen::Affine3d> poses;
+  PoseArrayToEigen(array,poses);
+
+  Eigen::Affine3d target;
+  target=T_kinect2arm*poses[0];
+  goal.mode=1;
+  goal.cartesian_position.x=target.translation()(0);
+  goal.cartesian_position.y=target.translation()(1);
+  goal.cartesian_position.z=target.translation()(2);
+
+  ac_grasping->sendGoal(goal);
+  ac_grasping->waitForResult();
+
+  if(ac_grasping->getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+  {
+    //ROS_INFO("cannot move the base for some reason (step 1)");
+    string param = "PNPconditionsBuffer/objGrasped";
+    handle.setParam(param, 0);
+  }else{
+    string param = "PNPconditionsBuffer/objGrasped";
+    handle.setParam(param, 1);
+  }
+}
 
 void RockinPNPActionServer::do_move(float GX, float GY, float GTh_RAD, bool *run) { // theta in degrees
   ROS_INFO("do_move started");
