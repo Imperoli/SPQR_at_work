@@ -1,0 +1,8 @@
+<launch>
+  <!--include file="$(find rgbd_object_detection)/launch/kinect.launch"/-->
+  <node name="tabletop_detector" pkg="object_recognition_core" type="detection" args=" -c $(find rgbd_object_detection)/config/detection_table_and_clusters.ork" output="screen" />
+  <node name="cloud_accumulator" pkg="rgbd_object_detection" type="cloud_accumulator" >
+    <param name="cloud_number" value="10"/>
+  </node>
+  <!--node name="clusters_centroid" pkg="rgbd_object_detection" type="clusters_centroid_node" /-->
+</launch>
