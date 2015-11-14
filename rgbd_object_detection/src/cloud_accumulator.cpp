@@ -34,7 +34,7 @@ bool active=false;
 void callback(const ImageConstPtr& rgb_image, const CameraInfoConstPtr& rgb_cam_info, const ImageConstPtr& depth_image, const CameraInfoConstPtr& depth_cam_info)
 {
   active_mtx.lock();
-  if(!active) return;
+  if(!active){ active_mtx.unlock(); return;}
   // Get camera info
  /* Eigen::Matrix3d K_rgb = Eigen::Matrix3d::Identity();
   Eigen::Matrix3d K_depth = Eigen::Matrix3d::Identity();
@@ -45,6 +45,7 @@ void callback(const ImageConstPtr& rgb_image, const CameraInfoConstPtr& rgb_cam_
       K_depth(r, c) = depth_cam_info->K[k];
     }
   }*/
+  
   
   cv_bridge::CvImagePtr rgb = cv_bridge::toCvCopy(rgb_image, rgb_image->encoding);
   cv_bridge::CvImagePtr depth = cv_bridge::toCvCopy(depth_image, depth_image->encoding);
@@ -87,16 +88,28 @@ void callback(const ImageConstPtr& rgb_image, const CameraInfoConstPtr& rgb_cam_
     iter=0;
     sum_depth=cv::Mat::zeros(cloud_height,cloud_width,CV_16UC1);
     sum_rgb=cv::Mat::zeros(cloud_height,cloud_width,CV_8UC3);
-    active=false;
   }
   active_mtx.unlock();
 }
 
-bool srv_cb(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
+bool srv_start_cb(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
 {
   active_mtx.lock();
-  if(!active)
+    iter=0;
+    sum_depth=cv::Mat::zeros(cloud_height,cloud_width,CV_16UC1);
+    sum_rgb=cv::Mat::zeros(cloud_height,cloud_width,CV_8UC3);
     active=true;
+  active_mtx.unlock();
+  return true;
+}
+
+bool srv_stop_cb(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
+{
+  active_mtx.lock();
+    iter=0;
+    sum_depth=cv::Mat::zeros(cloud_height,cloud_width,CV_16UC1);
+    sum_rgb=cv::Mat::zeros(cloud_height,cloud_width,CV_8UC3);
+    active=false;
   active_mtx.unlock();
   return true;
 }
@@ -141,7 +154,8 @@ int main(int argc, char** argv)
   sum_depth=cv::Mat(cloud_height,cloud_width,CV_16UC1,cv::Scalar(0));
   sum_rgb=cv::Mat(cloud_height,cloud_width,CV_8UC3,cv::Scalar(0,0,0));
 
-  ros::ServiceServer accumulate_srv=nh.advertiseService("accumulate_clouds", srv_cb);
+  ros::ServiceServer accumulate_start_srv=nh.advertiseService("/accumulate_clouds_start", srv_start_cb);
+  ros::ServiceServer accumulate_stop_srv=nh.advertiseService("/accumulate_clouds_stop", srv_stop_cb);
 
   ros::spin();
 

@@ -141,12 +141,16 @@ include_directories(
 # add_dependencies(obj_detect ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(clusters_centroid_node src/main.cpp)
-target_link_libraries(clusters_centroid_node ${catkin_LIBRARIES})
+#add_executable(clusters_centroid_node src/main.cpp)
+#target_link_libraries(clusters_centroid_node ${catkin_LIBRARIES})
 
 add_executable(detection_pipeline_server src/detection_pipeline.cpp)
 target_link_libraries(detection_pipeline_server ${catkin_LIBRARIES})
-add_dependencies(detection_pipeline_server youbot_object_recognition_gencpp)
+add_dependencies(detection_pipeline_server rgbd_object_detection_gencpp)
+
+add_executable(detection_client_example src/detection_client_example.cpp)
+target_link_libraries(detection_client_example ${catkin_LIBRARIES})
+add_dependencies(detection_client_example rgbd_object_detection_gencpp)
 
 add_executable(cloud_accumulator src/cloud_accumulator.cpp)
 target_link_libraries(cloud_accumulator ${catkin_LIBRARIES} ${OpenCV_LIBS})

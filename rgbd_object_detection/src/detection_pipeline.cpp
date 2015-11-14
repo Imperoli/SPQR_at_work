@@ -21,7 +21,8 @@
 
 using namespace message_filters;
 
-std::string clusters_topic, tables_topic;
+std::string clusters_topic, tables_topic, rgb_optical_frame, arm_base_frame;
+double table_z_offset, table_max_z, table_inclination_threshold, max_object_z_displacement; 
 
 ros::Publisher obj_pub;
 ros::Publisher tables_pub;
@@ -36,7 +37,7 @@ visualization_msgs::MarkerArray clusters;
 object_recognition_msgs::TableArray tables;
 
 actionlib::SimpleActionServer<rgbd_object_detection::DetectObjectsAction>* as;
-ros::ServiceClient srv_client;
+ros::ServiceClient srv_start_accumulate_client, srv_stop_accumulate_client;
 
 void tf2Affine(tf::StampedTransform& tf, Eigen::Affine3d& T)
 {
@@ -136,7 +137,7 @@ bool extractWorkspaceTable(const object_recognition_msgs::TableArray tables, int
     tf::poseMsgToEigen (tables.tables[i].pose, T);
     T=T_kinect_arm*T;
     Eigen::Vector3d z=Eigen::Vector3d(0,0,1);
-    if (T.linear().col(2).dot(z)<.9||(T.translation()(2)<0||T.translation()(2)>.2)) continue;
+    if (T.linear().col(2).dot(z)<table_inclination_threshold||(T.translation()(2)<(table_z_offset-0.02)||T.translation()(2)>(table_z_offset+table_max_z))) continue;
     table_index=i;
     break;
   }
@@ -146,7 +147,7 @@ bool extractWorkspaceTable(const object_recognition_msgs::TableArray tables, int
     tabl.header=tables.header;
     tabl.tables.push_back(tables.tables[table_index]);
     tables_pub.publish(tabl);
-    ros::spinOnce();
+    //ros::spinOnce();
     return true;
   }
   return false;
@@ -179,7 +180,7 @@ bool extractTabletopObjects(const object_recognition_msgs::Table& table, const g
     
     
     //if(obj(2)-T.translation()(2)>.2||obj(2)-T.translation()(2)<0) continue;
-    if(obj(2)>.2||obj(2)<0) continue;
+    if(obj(2)>max_object_z_displacement||obj(2)<0) continue;
     
     std::vector<Eigen::Vector2d> poly_translated;
     Eigen::Vector2d o=obj.head(2);
@@ -195,7 +196,7 @@ bool extractTabletopObjects(const object_recognition_msgs::Table& table, const g
     for (int j=0; j<poly_translated.size(); j++){
       int j1=j+1;
       if (j1==poly_translated.size()) j1=0;
-      if((poly_translated[j1]-poly_translated[j]).norm()<.01) continue;
+      if((poly_translated[j1]-poly_translated[j]).norm()<.015) continue;
       double a=poly_translated[j1](0)*poly_translated[j](1) - poly_translated[j](0)*poly_translated[j1](1);
       if(first)
       {
@@ -228,22 +229,24 @@ bool extractTabletopObjects(const object_recognition_msgs::Table& table, const g
 
 bool callback(const object_recognition_msgs::TableArray tables, const visualization_msgs::MarkerArray clusters, geometry_msgs::PoseArray& out)
 {
+ // ROS_INFO("starting compute centroids");
   geometry_msgs::PoseArray centroids;
-  computeClustersCentroids(clusters, centroids);
+  if(!computeClustersCentroids(clusters, centroids)) return false;
   
+ // ROS_INFO("starting extract wstable");
   int table_index=-1;
   if(!extractWorkspaceTable(tables, table_index)) return false;
   
+  //ROS_INFO("starting extract tabletop objects");
   geometry_msgs::PoseArray tabletop_objects;
   if(extractTabletopObjects(tables.tables[table_index], centroids, tabletop_objects))
   {
-    //obj_pub.publish(tabletop_objects);
+    obj_pub.publish(tabletop_objects);
     out=tabletop_objects;
     return true;
   }
     
   return false;
-  //ros::spinOnce();
 }
 
 void tables_cb(const object_recognition_msgs::TableArray::ConstPtr msg)
@@ -264,24 +267,44 @@ void clusters_cb(const visualization_msgs::MarkerArray::ConstPtr msg)
 
 void action_cb(const rgbd_object_detection::DetectObjectsGoalConstPtr& goal)
 {
-  std_srvs::Empty srv;
-  srv_client.call(srv);
-
+  ROS_INFO("object detection action started");
   rgbd_object_detection::DetectObjectsResult result;
+  std_srvs::Empty srv;
+  if(!srv_start_accumulate_client.call(srv))
+  {
+    ROS_INFO("cannot start accumulate_cloud srv");
+    as->setAborted(result);
+    return;
+  }
+
   ROS_INFO("waiting for clusters and tables");
-  while(!flag_tables){
-    sleep(.5);
-    //ros::spinOnce();
-  }
-  while(!flag_clusters){
-    sleep(.5);
-    //ros::spinOnce();
-  }
-  flag_tables=false;
-  flag_clusters=false;
-  
   clusters_mtx.lock();
   tables_mtx.lock();
+  while(!flag_tables||!flag_clusters){
+    tables_mtx.unlock();
+    clusters_mtx.unlock();
+
+    //ros::spinOnce();
+    usleep(500000); 
+    //ROS_INFO("waiting for clusters and tables (cycle)");
+    
+    clusters_mtx.lock();
+    tables_mtx.lock();
+  }
+
+  //ROS_INFO("clusters and tables ACQUIRED");
+  flag_tables=false;
+  flag_clusters=false;
+  std_srvs::Empty srv2;
+  if(!srv_stop_accumulate_client.call(srv2))
+  {
+    ROS_INFO("cannot stop accumulate_cloud srv");
+    as->setAborted(result);
+    return;
+  }
+  //ROS_INFO("accumulate clouds stopped");
+  //clusters_mtx.lock();
+  //tables_mtx.lock();
   
   geometry_msgs::PoseArray tabletop_objects;
   if(callback(tables, clusters, tabletop_objects))
@@ -290,26 +313,40 @@ void action_cb(const rgbd_object_detection::DetectObjectsGoalConstPtr& goal)
     as->setSucceeded(result);
     tables_mtx.unlock();
     clusters_mtx.unlock();
+    ROS_INFO("object detection action ended OK");
     return;
   }
   
   as->setAborted(result);
   tables_mtx.unlock();
   clusters_mtx.unlock();
-  //ROS_INFO("action_cb end");
+  ROS_INFO("object detection action ended FAIL");
 }
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "oject_recognition_pipeline");
+  ros::init(argc, argv, "oject_detection_pipeline");
 
   ros::NodeHandle nh("~");
 
   nh.param("clusters_topic",clusters_topic,std::string("/tabletop/clusters"));
   nh.param("tables_topic",tables_topic,std::string("/table_array"));
+  nh.param("rgb_optical_frame",rgb_optical_frame,std::string("kinect_rgb_optical_frame"));
+  nh.param("arm_base_frame",arm_base_frame,std::string("arm_base"));
+  nh.param("table_z_offset",table_z_offset,(double) 0.0); // [m] w.r.t. arm_base reference frame
+  nh.param("table_max_z",table_max_z,0.2);
+  nh.param("table_inclination_threshold",table_inclination_threshold,0.9); // between 0 and 1: 1 means that the table normal has to be parallel to the z axis of the arm_base frame
+  nh.param("max_object_z_displacement",max_object_z_displacement,0.2); // [m] from the table
   
-  std::cerr<<"rgb_image_topic: "<<clusters_topic<<std::endl;
-  std::cerr<<"depth_image_topic: "<<tables_topic<<std::endl;
+  std::cerr<<"object detection action server"<<std::endl;
+  std::cerr<<"cluster_topic: "<<clusters_topic<<std::endl;
+  std::cerr<<"tables_topic: "<<tables_topic<<std::endl;
+  std::cerr<<"rgb_optical_frame: "<<rgb_optical_frame<<std::endl;
+  std::cerr<<"arm_base_frame: "<<arm_base_frame<<std::endl;
+  std::cerr<<"table_z_offset: "<<table_z_offset<<std::endl;
+  std::cerr<<"table_max_z: "<<table_max_z<<std::endl;
+  std::cerr<<"table_inclination_threshold: "<<table_inclination_threshold<<std::endl;
+  std::cerr<<"max_object_z_displacement: "<<max_object_z_displacement<<std::endl;
   
   obj_pub = nh.advertise<geometry_msgs::PoseArray> ("objects_centroid", 1);
   tables_pub = nh.advertise<object_recognition_msgs::TableArray> ("workspace_table", 1);
@@ -317,44 +354,17 @@ int main(int argc, char** argv)
   ros::Subscriber clusters_sub = nh.subscribe(clusters_topic, 1, clusters_cb);
   ros::Subscriber tables_sub = nh.subscribe(tables_topic, 1, tables_cb);
 
-  computeTransformation("arm_base", "kinect_rgb_optical_frame", T_kinect_arm);
-  std::cout<<"T_kinect2arm:\n"<<T_kinect_arm.matrix()<<std::endl;
+  computeTransformation(arm_base_frame, rgb_optical_frame, T_kinect_arm);
   
   flag_clusters=false; flag_tables=false;
   
-  srv_client = nh.serviceClient<std_srvs::Empty>("accumulate_clouds");
+  srv_start_accumulate_client = nh.serviceClient<std_srvs::Empty>("/accumulate_clouds_start");
+  srv_stop_accumulate_client = nh.serviceClient<std_srvs::Empty>("/accumulate_clouds_stop");
   
-  as =new actionlib::SimpleActionServer<rgbd_object_detection::DetectObjectsAction>(nh, "detect_objects", action_cb, false);
-  //ROS_INFO("#############  detect_objects action server started  ######################################################");
+  as =new actionlib::SimpleActionServer<rgbd_object_detection::DetectObjectsAction>(nh, "/detect_objects", action_cb, false);
   as->start();
   
   ros::spin();
-  
- /* 
-  
-  while(ros::ok())
-  {
-    ROS_INFO("waiting for clusters and tables");
-    while(!flag_tables){
-      sleep(.5);
-      ros::spinOnce();
-    }
-    while(!flag_clusters){
-      sleep(.5);
-      ros::spinOnce();
-    }
-    flag_tables=false;
-    flag_clusters=false;
-    
-    clusters_mtx.lock();
-    tables_mtx.lock();
-    
-    callback(tables, clusters);
-    
-    tables_mtx.unlock();
-    clusters_mtx.unlock();
-    
-  }*/
 
   return 0;
 }
