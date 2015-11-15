@@ -110,7 +110,7 @@ int main(int argc, char **argv){
   ros::Publisher obst_pub = nh.advertise<arm_planner::Obstacles>("/obstacles_position", 1);
   //ros::Subscriber sub = nh.subscribe("/planner_response", 1, response_cb);
 
-  actionlib::SimpleActionClient<arm_planner::arm_planningAction> ac("arm_planner", true);
+  actionlib::SimpleActionClient<arm_planner::arm_planningAction> ac("/arm_planner", true);
   arm_planner::arm_planningGoal goal;
 
   arm_planner::TargetRequest target_request;

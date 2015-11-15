@@ -12,7 +12,7 @@ namespace arm_planner{
 using namespace std;
 
 ArmPlanner::ArmPlanner(ros::NodeHandle& nh, std::string name):
-planningAction(nh, "arm_planner", boost::bind(&ArmPlanner::compute_action, this, _1), false)
+planningAction(nh, "/arm_planner", boost::bind(&ArmPlanner::compute_action, this, _1), false)
 {
   //visualization=true;
   nh.param("visualization", visualization, true);
@@ -301,13 +301,13 @@ void ArmPlanner::initPlanning(char* work_space_dir){
 
   //Eigen::Matrix<double,5,1> look_in_front_45c; look_in_front_45c<<2.94961, 0.68896, -1.40066, 3.54314, 1.35263;
   Eigen::Matrix<double,5,1> look_in_front_45c; look_in_front_45c<<2.94961, 0.58896, -1.40066, 3.54314, 1.35263;
-  Eigen::Matrix<double,5,1> look_in_front_45a; look_in_front_45a<<2.94961, 0.58896, -1.40066, 3.54314, 1.35263;
-  Eigen::Matrix<double,5,1> look_in_front_45b; look_in_front_45b<<2.94961, 0.260567, -1.02419, 3.49506, .013;
-  Eigen::Matrix<double,5,1> look_in_front_75a; look_in_front_75a<<2.94961, 1.06367, -1.35692, 3.54829, 2.92;
+  Eigen::Matrix<double,5,1> look_in_front_45a; look_in_front_45a<<2.9496 , 1.1344 , -2.5481 , 1.7889 , 2.9234;
+  Eigen::Matrix<double,5,1> look_in_front_45b; look_in_front_45b<<2.9496,0.05,-0.05,0.05,0.01;
+  Eigen::Matrix<double,5,1> look_in_front_75a; look_in_front_75a<<5.8961, 0.0191032, -0.583662, 2.85967, 2.92;//grasp
   Eigen::Matrix<double,5,1> look_in_front_75b; look_in_front_75b<<2.94961, 1.06367, -1.35692, 3.54829, .013;
   Eigen::Matrix<double,5,1> look_in_front_30a; look_in_front_30a<<2.94961, 0.125903, -0.595511, 2.93925, 2.92;
   Eigen::Matrix<double,5,1> look_in_front_30b; look_in_front_30b<<2.94961, 0.125903, -0.595511, 2.93925, .013;
-  Eigen::Matrix<double,5,1> look_in_front_20a; look_in_front_20a<<2.94961, 0.0191032, -0.583662, 2.85967, 2.92;
+  Eigen::Matrix<double,5,1> look_in_front_20a; look_in_front_20a<<2.94961, 0.0191032, -0.583662, 2.85967, 2.92;//drop
   Eigen::Matrix<double,5,1> look_in_front_20b; look_in_front_20b<<2.94961, 0.0191032, -0.74662, 2.65, 1.46;
 
   /*Eigen::Matrix<double,5,1> home1; home1<<.011,.011,-.16,.023,.012;
@@ -979,15 +979,15 @@ bool ArmPlanner::grasping_pipeline(){
       if(grasp()){
         sleep(.5);
         //move_away_from_targetUP(.2,.04);
-        move_away_from_target(.2,.03*velocity_scale); return true;
-       /* fixed_poses[7](4)=planner->current_joint_angles(4);
-        if(move_to_fixed_pose(fixed_poses[7],.4,.04)){
+        move_away_from_target(.2,.03*velocity_scale); //return true;
+        //fixed_poses[7](4)=planner->current_joint_angles(4);
+        if(move_to_fixed_pose(fixed_poses[3],.4,.04*velocity_scale)){
           return !grasping_failure();
         }else{
-          fixed_poses[8](4)=planner->current_joint_angles(4);
-          if(move_to_fixed_pose(fixed_poses[8],.4,.04))
+          //fixed_poses[8](4)=planner->current_joint_angles(4);
+          if(move_to_fixed_pose(fixed_poses[1],.4,.04*velocity_scale))
             return !grasping_failure();
-        }*/
+        }
       }
     }
   }
@@ -1291,8 +1291,9 @@ int main(int argc, char **argv){
       arm_pl->planning_scene_pub.publish(psf_msg);
       ros::Rate rate(20);
       rate.sleep();
-
       
+      //Eigen::Matrix<double,5,1> v; v<<2.9496, 1.1344, -2.5481, 1.7889, 2.9234;
+      //std::cout<<(arm_pl->planner->current_joint_angles+v).transpose()<<std::endl;
     }else{
       sleep(3);
     }
