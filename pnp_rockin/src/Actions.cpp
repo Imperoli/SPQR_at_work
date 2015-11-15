@@ -201,8 +201,8 @@ void RockinPNPActionServer::grasp(string params, bool *run) {
   goal.cartesian_position.x=target.translation()(0);
   goal.cartesian_position.y=target.translation()(1);
   goal.cartesian_position.z=target.translation()(2);
-  arm_goal_grasp.gripper_roll=1;
-  arm_goal_grasp.gripper_pitch=80;
+  goal.gripper_roll=1;
+  goal.gripper_pitch=80;
 
   ac_grasping->sendGoal(goal);
   ac_grasping->waitForResult();
