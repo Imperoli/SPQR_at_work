@@ -29,7 +29,7 @@ private:
     // action clients
     actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> *ac_move;         //the action client for the movement planner
     actionlib::SimpleActionClient<rgbd_object_detection::DetectObjectsAction> *ac_detection;    //the action client for the detection phase
-    actionlib::SimpleActionClient<arm_planner::arm_planningAction> *ac_grasping;    //the action client for the grasping phase
+    actionlib::SimpleActionClient<arm_planner::arm_planningAction> *ac_manipulation;    //the action client for the grasping phase
 
     ros::Publisher PNP_cond_pub;
     
@@ -43,6 +43,7 @@ private:
     std::map<std::string, Eigen::Vector3f> workstations;
     std::vector<std::pair<std::string, std::string> > orders;
     int orders_index;
+    int grasp_flag;
 
 public:
 
@@ -72,6 +73,7 @@ public:
     void move(string params, bool *run);
     void detection(string params, bool *run);
     void grasp(string params, bool *run);
+    void drop(string params, bool *run);
     void init(string params, bool *run);
 
     void do_move(float GX, float GY, float GTh_RAD, bool *run);

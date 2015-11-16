@@ -116,8 +116,8 @@ void RockinPNPActionServer::read_workstations_locations(std::map<std::string, Ei
 {
   ws.clear();
   ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation1",Eigen::Vector3f(-3.05,-0.95,3.14159)));
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation2",Eigen::Vector3f(-4.35,-3.05,0.0)));
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation3",Eigen::Vector3f(-2.7,-2.25,(3.14159/2))));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation2",Eigen::Vector3f(-4.30,-2.95,0.0)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation3",Eigen::Vector3f(-2.80,-2.65,(3.14159/2))));
 }
 
 void RockinPNPActionServer::read_orders_from_cfh(std::vector<std::pair<std::string, std::string> >& o)
@@ -146,14 +146,22 @@ void RockinPNPActionServer::init(string params, bool *run)
   read_orders_from_cfh(/*mesg from cfh*/ orders);
   read_items_from_cfh(/*mesg from cfh*/ items_state);
   orders_index=0;
+  grasp_flag=1;
+  string param_grasp = "PNPconditionsBuffer/grasp_flag";
+  handle.setParam(param_grasp, grasp_flag);
 }
 
 void RockinPNPActionServer::move(string params, bool *run) {
   ROS_INFO("move started ...");
   
-  std::string obj=orders[orders_index].first;
-  Eigen::Vector3f loc; loc=workstations[items_state[obj]];
-  do_move(loc(0),loc(1),loc(2),run);
+  if(grasp_flag==1){
+    std::string obj=orders[orders_index].first;
+    Eigen::Vector3f loc; loc=workstations[items_state[obj]];
+    do_move(loc(0),loc(1),loc(2),run);
+  }else{
+    Eigen::Vector3f loc; loc=workstations[orders[orders_index].second];
+    do_move(loc(0),loc(1),loc(2),run);
+  }
   /*float GX,GY,Gtheta;
   if (getLocationPosition(params,GX,GY,Gtheta)) {
     do_move(GX,GY,Gtheta,run);
@@ -215,12 +223,12 @@ void RockinPNPActionServer::detection(string params, bool *run) {
 
 void RockinPNPActionServer::grasp(string params, bool *run) {
   ROS_INFO("grasping started ...");
-  if (ac_grasping==NULL) { //create the client only once
+  if (ac_manipulation==NULL) { //create the client only once
     // Define the action client (true: we want to spin a thread)
-    ac_grasping = new actionlib::SimpleActionClient<arm_planner::arm_planningAction>(TOPIC_GRASPING_NODE, true);
+    ac_manipulation = new actionlib::SimpleActionClient<arm_planner::arm_planningAction>(TOPIC_GRASPING_NODE, true);
 
     // Wait for the action server to come up
-    while(!ac_grasping->waitForServer(ros::Duration(5.0))){
+    while(!ac_manipulation->waitForServer(ros::Duration(5.0))){
       //ROS_INFO("Waiting for move_base action server to come up");
     }
   }
@@ -253,7 +261,7 @@ void RockinPNPActionServer::grasp(string params, bool *run) {
   //ROS_INFO("debug - line 3");
   goal.cartesian_position.x=target.translation()(0);
   //ROS_INFO("debug - line 4");
-  goal.cartesian_position.y=target.translation()(1);
+  goal.cartesian_position.y=target.translation()(1) - 0.02;
   //ROS_INFO("debug - line 5");
   goal.cartesian_position.z=target.translation()(2);
   //ROS_INFO("debug - line 6");
@@ -263,17 +271,89 @@ void RockinPNPActionServer::grasp(string params, bool *run) {
   //ROS_INFO("debug - line 8");
 
   ROS_INFO("grasping sending goal ...");
-  ac_grasping->sendGoal(goal);
-  ac_grasping->waitForResult();
+  ac_manipulation->sendGoal(goal);
+  ac_manipulation->waitForResult();
 
-  if(ac_grasping->getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+  if(ac_manipulation->getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
   {
     //ROS_INFO("cannot move the base for some reason (step 1)");
     string param = "PNPconditionsBuffer/objGrasped";
     handle.setParam(param, 0);
+    grasp_flag=1;
+    string param_grasp = "PNPconditionsBuffer/grasp_flag";
+    handle.setParam(param_grasp, grasp_flag);
   }else{
     string param = "PNPconditionsBuffer/objGrasped";
     handle.setParam(param, 1);
+    grasp_flag=0;
+    string param_grasp = "PNPconditionsBuffer/grasp_flag";
+    handle.setParam(param_grasp, grasp_flag);
+  }
+}
+
+void RockinPNPActionServer::drop(string params, bool *run) {
+  ROS_INFO("drop started ...");
+  if (ac_manipulation==NULL) { //create the client only once
+    // Define the action client (true: we want to spin a thread)
+    ac_manipulation = new actionlib::SimpleActionClient<arm_planner::arm_planningAction>(TOPIC_GRASPING_NODE, true);
+
+    // Wait for the action server to come up
+    while(!ac_manipulation->waitForServer(ros::Duration(5.0))){
+      //ROS_INFO("Waiting for move_base action server to come up");
+    }
+  }
+  ROS_INFO("dropping client ready ...");
+  arm_planner::arm_planningGoal goal;
+  /*std::vector<Eigen::Affine3d> poses;
+
+  PoseArrayToEigen(detected_objects,poses);
+
+  ROS_INFO("target transformed ...");
+  if(detected_objects.poses.size()==0){
+    //ROS_INFO("cannot move the base for some reason (step 1)");
+    string param = "PNPconditionsBuffer/objGrasped";
+    handle.setParam(param, 0);
+    return;
+  }*/
+  Eigen::Vector3d target(0,-.5, .2);
+  //ROS_INFO("debug - line 2");
+  goal.mode=2;
+  //ROS_INFO("debug - line 3");
+  goal.cartesian_position.x=target(0);
+  //ROS_INFO("debug - line 4");
+  goal.cartesian_position.y=target(1);
+  //ROS_INFO("debug - line 5");
+  goal.cartesian_position.z=target(2);
+  //ROS_INFO("debug - line 6");
+  goal.gripper_roll=1;
+  //ROS_INFO("debug - line 7");
+  goal.gripper_pitch=80;
+  //ROS_INFO("debug - line 8");
+
+  ROS_INFO("dropping sending goal ...");
+  ac_manipulation->sendGoal(goal);
+  ac_manipulation->waitForResult();
+
+  if(ac_manipulation->getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+  {
+    //ROS_INFO("cannot move the base for some reason (step 1)");
+    string param = "PNPconditionsBuffer/objDropped";
+    handle.setParam(param, 0);
+    grasp_flag=0;
+    string param_grasp = "PNPconditionsBuffer/grasp_flag";
+    handle.setParam(param_grasp, grasp_flag);
+  }else{
+    string param = "PNPconditionsBuffer/objDropped";
+    handle.setParam(param, 1);
+    grasp_flag=1;
+    string param_grasp = "PNPconditionsBuffer/grasp_flag";
+    handle.setParam(param_grasp, grasp_flag);
+    orders_index++;
+    if(orders_index>=orders.size())
+    {
+      std_msgs::String msg; msg.data="stop";
+      plantoexec_pub.publish(msg);
+    }
   }
 }
 

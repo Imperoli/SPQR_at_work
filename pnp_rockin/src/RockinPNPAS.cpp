@@ -20,12 +20,13 @@ RockinPNPActionServer::RockinPNPActionServer(ros::NodeHandle n) : PNPActionServe
     register_action("move",&RockinPNPActionServer::move,this);
     register_action("detection",&RockinPNPActionServer::detection,this);
     register_action("grasp",&RockinPNPActionServer::grasp,this);
+    register_action("drop",&RockinPNPActionServer::drop,this);
 
     listener = new tf::TransformListener();
 
     ac_move=NULL;
     ac_detection=NULL;
-    ac_grasping=NULL;
+    ac_manipulation=NULL;
 
     PNP_cond_pub = handle.advertise<std_msgs::String>(TOPIC_PNPCONDITION, 100);
 
