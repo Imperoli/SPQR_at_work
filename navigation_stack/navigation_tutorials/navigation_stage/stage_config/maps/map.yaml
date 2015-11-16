@@ -1,0 +1,11 @@
+image: map_arena_final.pgm
+resolution: 0.050000
+origin: [-8.000000, -7.000000, 0.000000]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+
+radius: .8
+origin_x: -8.000
+origin_y: -7.000
+map_scale: 3

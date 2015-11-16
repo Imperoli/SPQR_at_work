@@ -1,0 +1,72 @@
+<launch>
+
+  <master auto="start"/>
+  <!--param name="/use_sim_time" value="true"/-->
+  <include file="$(find youbot_calibration)/launch/calibrated_tf_publisher.launch"/>
+  
+  <arg name="laser_port" default="/dev/ttyACM0" />
+  <arg name="laser_topic" default="/base_scan" />
+  <arg name="laser_frame_id" default="/hokuyo" />
+
+  <include file="$(find youbot_driver_ros_interface)/launch/youbot_driver.launch" />
+  
+  <include file="$(find navigation_stage)/move_base_config/move_base.xml"/>
+  
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find navigation_stage)/stage_config/maps/map.yaml" />
+  
+  <!--node pkg="stage_ros" type="stageros" name="stageros" args="$(find navigation_stage)/stage_config/worlds/dis.world" respawn="false" >
+    <param name="base_watchdog_timeout" value="0.2"/>
+  </node-->
+
+  <include file="$(find navigation_stage)/move_base_config/amcl_node2.xml"/>  
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find navigation_stage)/single_robot.rviz" />
+
+  <node pkg="rosservice" type="rosservice" name="global_loc" args="call --wait /global_localization"/>
+
+  <!-- Hokuyo Laser -->
+ <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" args="_port:=$(arg laser_port) _frame_id:=$(arg laser_frame_id) /scan:=$(arg laser_topic)" output="screen" />
+  
+  <node pkg="tf" type="static_transform_publisher" name="hokuyo_link_broadcaster" args="0.37 0 0.1 0 0 0 1 /base_link /hokuyo 100" />
+
+  <!-- Joystick -->
+  <node name="joy_node" pkg="joy" type="joy_node" output="screen" >
+    <param name="~deadzone" type="double" value="0.2"/> 
+    <param name="~autorepeat_rate" type="double" value="20."/> 
+    <param name="~dev" type="str" value="/dev/input/js4"/>  
+  </node>
+  <node name="youbot_joystick_control" pkg="youbot_joystick_control" type="youbot_joystick_control" output="screen" >
+  </node>
+
+  <node pkg="holonomic_base_planner" type="base_planner_ActionServer" name="base_planner_ActionServer" args="$(find navigation_stage)/stage_config/maps" output="screen" >
+  </node>
+  
+   <node pkg="holonomic_base_planner" type="holonomic_base_planner_ActionServer" name="holonomic_base_planner_ActionServer" args="$(find navigation_stage)/stage_config/maps" output="screen" >
+  </node>
+  
+  <!--node pkg="holonomic_base_planner" type="holonomic_base_planner_ActionClient" name="holonomic_base_planner_ActionClient" args="$(find navigation_stage)/stage_config/maps" output="screen">
+  </node-->
+
+  <!-- OBJ DETECTOR -->
+  <include file="$(find rgbd_object_detection)/launch/rgbd_object_detection.launch" />
+
+  <!-- ARM PLANNER -->
+  <include file="$(find arm_planner)/launch/planner.launch" />
+
+  <!-- PNP -->
+  <arg name="robot_name" default="youbot" />
+  <arg name="plan_folder" value="$(find pnp_rockin)/plans" />
+
+  <param name="robot_name" value="$(arg robot_name)" />
+
+  <node pkg="pnp_ros" type="pnp_node" name="pnp" args="" output="screen">
+      <param name="plan_folder" value="$(arg plan_folder)" />
+      <param name="current_plan" value="stop" />
+  </node>
+  <node pkg="pnp_rockin" type="pnp_rockin_node" name="pnp_rockin_node" args="" output="screen">      
+  </node>
+
+  <!-- MOVABLE=TRUE -->
+  <node pkg="rostopic" type="rostopic" name="movableTrue" args="pub /movable std_msgs/Bool 'data: true' --once" output="screen"/>
+</launch>
+
