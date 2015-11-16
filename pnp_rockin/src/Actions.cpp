@@ -112,9 +112,9 @@ bool RockinPNPActionServer::computeTransformation(std::string target, std::strin
   return false;
 }
 
-void RockinPNPActionServer::read_workstations_locations(std::map<std::pair<std::string, Eigen::Vector3f> >& ws)
+void RockinPNPActionServer::read_workstations_locations(std::map<std::string, Eigen::Vector3f>& ws)
 {
-  ws.clear()
+  ws.clear();
   ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation1",Eigen::Vector3f(-3.05,-0.95,3.14159)));
   ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation2",Eigen::Vector3f(-4.35,-3.05,0.0)));
   ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation3",Eigen::Vector3f(-2.7,-2.25,(3.14159/2))));
@@ -122,15 +122,15 @@ void RockinPNPActionServer::read_workstations_locations(std::map<std::pair<std::
 
 void RockinPNPActionServer::read_orders_from_cfh(std::vector<std::pair<std::string, std::string> >& o)
 {
-  o.clear()
+  o.clear();
   o.push_back(std::pair<std::string, std::string>("Obj1","Workstation3"));
   o.push_back(std::pair<std::string, std::string>("Obj2","Workstation3"));
   o.push_back(std::pair<std::string, std::string>("Obj3","Workstation3"));
 }
 
-void RockinPNPActionServer::read_workstations_locations(std::map<std::pair<std::string, std::string> >& it)
+void RockinPNPActionServer::read_items_from_cfh(std::map<std::string, std::string>& it)
 {
-  it.clear()
+  it.clear();
   it.insert(std::pair<std::string, std::string>("Obj1","Workstation1"));
   it.insert(std::pair<std::string, std::string>("Obj2","Workstation2"));
   it.insert(std::pair<std::string, std::string>("Obj3","Workstation1"));
@@ -151,8 +151,8 @@ void RockinPNPActionServer::init(string params, bool *run)
 void RockinPNPActionServer::move(string params, bool *run) {
   ROS_INFO("move started ...");
   
-  std::string obj=orders[orders_index].first();
-  Eigen::Vector3f loc; loc=workstations[items[obj]];
+  std::string obj=orders[orders_index].first;
+  Eigen::Vector3f loc; loc=workstations[items_state[obj]];
   do_move(loc(0),loc(1),loc(2),run);
   /*float GX,GY,Gtheta;
   if (getLocationPosition(params,GX,GY,Gtheta)) {
