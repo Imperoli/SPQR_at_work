@@ -161,8 +161,8 @@ void compute_checkpoints(mapInfo& map_info, std::vector<Eigen::Vector2f>& points
   {
     resize(map, map, cv::Size(map.cols*map_info.map_scale,map.rows*map_info.map_scale), 0, 0,cv::INTER_NEAREST);
   }
-  cv::imshow("checkpoints",map);
-  cv::waitKey(0);
+  //cv::imshow("checkpoints",map);
+  //cv::waitKey(0);
 
 }
 

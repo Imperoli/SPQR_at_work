@@ -43,6 +43,8 @@ static void onMouse( int event, int x, int y, int, void* )
       
   if (map_info.map_scale>1)
     resize(show, show, cv::Size(map.cols*map_info.map_scale,map.rows*map_info.map_scale), 0, 0,cv::INTER_NEAREST);
+
+  std::cout<<"x "<<px<<" y "<<py<<" theta_rad "<<target_theta<<std::endl;
   
   if( event == EVENT_LBUTTONDOWN )
   {

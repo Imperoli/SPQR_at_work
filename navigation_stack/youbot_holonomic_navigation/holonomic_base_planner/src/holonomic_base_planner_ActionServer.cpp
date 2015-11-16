@@ -220,13 +220,15 @@ void action_cb(const move_base_msgs::MoveBaseGoalConstPtr& goal)
         Eigen::Vector2f attr(attraction);
         for (size_t i=0;i<repulsion_vector.size(); i++)
         {
-          repulsion_vector[i]=(attr_norm>.15)? repulsion_vector[i]*(k/10): repulsion_vector[i]*(k/20);
+        	float thresh=12;//10
+          //repulsion_vector[i]=(attr_norm>.15)? repulsion_vector[i]*(k/10): repulsion_vector[i]*(k/20);
+        	repulsion_vector[i]=(attr_norm>.15)? repulsion_vector[i]*(k/thresh): repulsion_vector[i]*(k/(thresh*2));
           float r0=repulsion_vector[i](0); float r1=repulsion_vector[i](1);
           repulsion_vector[i](0)=r0*cs-r1*sn;
 		      repulsion_vector[i](1)=r0*sn+r1*cs;
 		      Eigen::Vector2f ar=attraction+repulsion_vector[i];
 		      (ar(0)*attr(0)<0)? attr(0)=0:(fabs(ar(0))>fabs(attr(0)))? attr(0): attr(0)=ar(0);
-		      (ar(1)*attr(1)<0)? attr(1)=0:(fabs(ar(1))>fabs(attr(1)))? attr(1): attr(1)=ar(1);;
+		      (ar(1)*attr(1)<0)? attr(1)=0:(fabs(ar(1))>fabs(attr(1)))? attr(1): attr(1)=ar(1);
 		    }
 		    attraction=attr;
 		    
