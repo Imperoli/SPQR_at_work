@@ -39,6 +39,10 @@ private:
     geometry_msgs::PoseArray detected_objects;
 
     Eigen::Affine3d T_kinect2arm;
+    std::map<std::pair<std::string, std::string> > items_state;
+    std::map<std::pair<std::string, Eigen::Vector3f> > workstations;
+    std::vector<std::pair<std::string, std::string> > orders;
+    int orders_index;
 
 public:
 
@@ -56,6 +60,9 @@ public:
     void PoseArrayToEigen(const geometry_msgs::PoseArray& poses, std::vector<Eigen::Affine3d>& output);
     void tf2Affine(tf::StampedTransform& tf, Eigen::Affine3d& T);
     bool computeTransformation(std::string target, std::string source, Eigen::Affine3d& T);
+    void read_workstations_locations(std::map<std::pair<std::string, Eigen::Vector3f> >& ws);
+    void read_orders_from_cfh(std::vector<std::pair<std::string, std::string> >& o);
+    void read_workstations_locations(std::map<std::pair<std::string, std::string> >& it);
 
 
     /*
@@ -65,6 +72,7 @@ public:
     void move(string params, bool *run);
     void detection(string params, bool *run);
     void grasp(string params, bool *run);
+    void init(string params, bool *run);
 
     void do_move(float GX, float GY, float GTh_RAD, bool *run);
 

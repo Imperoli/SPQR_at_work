@@ -112,20 +112,54 @@ bool RockinPNPActionServer::computeTransformation(std::string target, std::strin
   return false;
 }
 
+void RockinPNPActionServer::read_workstations_locations(std::map<std::pair<std::string, Eigen::Vector3f> >& ws)
+{
+  ws.clear()
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation1",Eigen::Vector3f(-3.05,-0.95,3.14159)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation2",Eigen::Vector3f(-4.35,-3.05,0.0)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation3",Eigen::Vector3f(-2.7,-2.25,(3.14159/2))));
+}
+
+void RockinPNPActionServer::read_orders_from_cfh(std::vector<std::pair<std::string, std::string> >& o)
+{
+  o.clear()
+  o.push_back(std::pair<std::string, std::string>("Obj1","Workstation3"));
+  o.push_back(std::pair<std::string, std::string>("Obj2","Workstation3"));
+  o.push_back(std::pair<std::string, std::string>("Obj3","Workstation3"));
+}
+
+void RockinPNPActionServer::read_workstations_locations(std::map<std::pair<std::string, std::string> >& it)
+{
+  it.clear()
+  it.insert(std::pair<std::string, std::string>("Obj1","Workstation1"));
+  it.insert(std::pair<std::string, std::string>("Obj2","Workstation2"));
+  it.insert(std::pair<std::string, std::string>("Obj3","Workstation1"));
+}
 
 /*
  * ACTIONS
  */
 
+void RockinPNPActionServer::init(string params, bool *run)
+{
+  read_workstations_locations(workstations);
+  read_orders_from_cfh(/*mesg from cfh*/ orders);
+  read_items_from_cfh(/*mesg from cfh*/ items_state);
+  orders_index=0;
+}
 
 void RockinPNPActionServer::move(string params, bool *run) {
   ROS_INFO("move started ...");
-  float GX,GY,Gtheta;
+  
+  std::string obj=orders[orders_index].first();
+  Eigen::Vector3f loc; loc=workstations[items[obj]];
+  do_move(loc(0),loc(1),loc(2),run);
+  /*float GX,GY,Gtheta;
   if (getLocationPosition(params,GX,GY,Gtheta)) {
     do_move(GX,GY,Gtheta,run);
   }
   else 
-    ROS_WARN("Advertise: Cannot find location %s.",params.c_str());
+    ROS_WARN("Advertise: Cannot find location %s.",params.c_str());*/
 }
 
 
@@ -191,9 +225,14 @@ void RockinPNPActionServer::grasp(string params, bool *run) {
     }
   }
   arm_planner::arm_planningGoal goal;
-  geometry_msgs::PoseArray array;
   std::vector<Eigen::Affine3d> poses;
-  PoseArrayToEigen(array,poses);
+  if(detected_objects.poses.size()==0)
+  {
+    string param = "PNPconditionsBuffer/objGrasped";
+    handle.setParam(param, 0);
+    return;
+  }
+  PoseArrayToEigen(detected_objects,poses);
 
   Eigen::Affine3d target;
   target=T_kinect2arm*poses[0];

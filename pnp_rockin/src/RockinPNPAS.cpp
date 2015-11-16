@@ -15,6 +15,7 @@ RockinPNPActionServer::RockinPNPActionServer(ros::NodeHandle n) : PNPActionServe
     plantoexec_pub = handle.advertise<std_msgs::String>(TOPIC_PLANTOEXEC, 100);
     //rcom_pub= handle.advertise<tcp_interface::RCOMMessage>(TOPIC_RCOMMESSAGE,10);
 
+    register_action("init",&RockinPNPActionServer::init,this);
     register_action("wait",&RockinPNPActionServer::wait,this);
     register_action("move",&RockinPNPActionServer::move,this);
     register_action("detection",&RockinPNPActionServer::detection,this);
