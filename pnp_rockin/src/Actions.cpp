@@ -190,20 +190,36 @@ void RockinPNPActionServer::grasp(string params, bool *run) {
       //ROS_INFO("Waiting for move_base action server to come up");
     }
   }
+  ROS_INFO("grasping client ready ...");
   arm_planner::arm_planningGoal goal;
-  geometry_msgs::PoseArray array;
   std::vector<Eigen::Affine3d> poses;
-  PoseArrayToEigen(array,poses);
+  PoseArrayToEigen(detected_objects,poses);
 
+  ROS_INFO("target transformed ...");
+  if(detected_objects.poses.size()==0){
+    //ROS_INFO("cannot move the base for some reason (step 1)");
+    string param = "PNPconditionsBuffer/objGrasped";
+    handle.setParam(param, 0);
+    return;
+  }
   Eigen::Affine3d target;
+  //ROS_INFO("debug - line 1");
   target=T_kinect2arm*poses[0];
+  //ROS_INFO("debug - line 2");
   goal.mode=1;
+  //ROS_INFO("debug - line 3");
   goal.cartesian_position.x=target.translation()(0);
+  //ROS_INFO("debug - line 4");
   goal.cartesian_position.y=target.translation()(1);
+  //ROS_INFO("debug - line 5");
   goal.cartesian_position.z=target.translation()(2);
+  //ROS_INFO("debug - line 6");
   goal.gripper_roll=1;
+  //ROS_INFO("debug - line 7");
   goal.gripper_pitch=80;
+  //ROS_INFO("debug - line 8");
 
+  ROS_INFO("grasping sending goal ...");
   ac_grasping->sendGoal(goal);
   ac_grasping->waitForResult();
 
