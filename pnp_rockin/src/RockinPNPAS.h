@@ -44,6 +44,7 @@ private:
     std::vector<std::pair<std::string, std::string> > orders;
     int orders_index;
     int grasp_flag;
+    int counter_detection;
 
 public:
 
@@ -75,6 +76,7 @@ public:
     void grasp(string params, bool *run);
     void drop(string params, bool *run);
     void init(string params, bool *run);
+    void verifyGrasp(string params, bool *run);
 
     void do_move(float GX, float GY, float GTh_RAD, bool *run);
 

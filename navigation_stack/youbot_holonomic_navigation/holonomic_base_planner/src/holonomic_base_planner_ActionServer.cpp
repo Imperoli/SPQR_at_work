@@ -272,7 +272,7 @@ void action_cb(const move_base_msgs::MoveBaseGoalConstPtr& goal)
         cmd_vel.angular.z=((robot_orient-target_theta)>.005)? cmd_vel.angular.z-theta_diff: ((robot_orient-target_theta)<.005)? cmd_vel.angular.z+theta_diff: cmd_vel.angular.z;
       }
       
-      if((robot_pos-target).norm()<=.05 && (fabs(robot_orient-target_theta)<=.005))
+      if((robot_pos-target).norm()<=.05 && (fabs(robot_orient-target_theta)<=.02))//theta_thresh was .005
       {
         cmd_vel.linear.x = 0;
         cmd_vel.linear.y = 0;

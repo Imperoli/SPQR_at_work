@@ -115,9 +115,13 @@ bool RockinPNPActionServer::computeTransformation(std::string target, std::strin
 void RockinPNPActionServer::read_workstations_locations(std::map<std::string, Eigen::Vector3f>& ws)
 {
   ws.clear();
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation1",Eigen::Vector3f(-3.05,-0.95,3.14159)));
+  /*ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation1",Eigen::Vector3f(-3.05,-0.95,3.14159))); //
   ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation2",Eigen::Vector3f(-4.30,-2.95,0.0)));
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation3",Eigen::Vector3f(-2.80,-2.65,(3.14159/2))));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation3",Eigen::Vector3f(-2.80,-2.65,(3.14159/2))));*/
+  //verso ws1 aumenta Y; verso ws2 diminuisce Y; verso ws3 aumenta X
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation1",Eigen::Vector3f(-3.05,-0.9,3.14159))); 
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation2",Eigen::Vector3f(-4.30,-3.0,0.0))); 
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation3",Eigen::Vector3f(-2.70,-2.65,(3.14159/2))));
 }
 
 void RockinPNPActionServer::read_orders_from_cfh(std::vector<std::pair<std::string, std::string> >& o)
@@ -190,6 +194,7 @@ void RockinPNPActionServer::wait(string params, bool *run)
 }
 
 void RockinPNPActionServer::detection(string params, bool *run) {
+  counter_detection=0;
   ROS_INFO("detection started ...");
   detected_objects.poses.clear();
   if (ac_detection==NULL) { //create the client only once
@@ -202,21 +207,70 @@ void RockinPNPActionServer::detection(string params, bool *run) {
     }
   }
   //ROS_INFO("detection agent initialized ...");
-  rgbd_object_detection::DetectObjectsGoal goal;
-  ac_detection->sendGoal(goal);
-  ac_detection->waitForResult();
-
-  if(ac_detection->getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+  while(counter_detection<3)
   {
-    //ROS_INFO("cannot move the base for some reason (step 1)");
-    string param = "PNPconditionsBuffer/objDetected";
-    handle.setParam(param, 0);
-  }else{
-    string param = "PNPconditionsBuffer/objDetected";
-    handle.setParam(param, 1);
-    rgbd_object_detection::DetectObjectsResultConstPtr result;
-    result = ac_detection->getResult();
-    detected_objects = result->objects;
+    rgbd_object_detection::DetectObjectsGoal goal;
+    ac_detection->sendGoal(goal);
+    ac_detection->waitForResult();
+    counter_detection++;
+    if(ac_detection->getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+      //ROS_INFO("cannot move the base for some reason (step 1)");
+      string param = "PNPconditionsBuffer/objDetected";
+      handle.setParam(param, 0);
+    }else{
+      counter_detection=0;
+      string param = "PNPconditionsBuffer/objDetected";
+      handle.setParam(param, 1);
+      rgbd_object_detection::DetectObjectsResultConstPtr result;
+      result = ac_detection->getResult();
+      detected_objects = result->objects;
+      return;
+    }
+  }
+
+}
+
+//verifyGrasp action - for task1
+void RockinPNPActionServer::verifyGrasp(string params, bool *run) {
+  ROS_INFO("verifyGrasp action started ...");
+  counter_detection=0;
+  detected_objects.poses.clear();
+  if (ac_detection==NULL) { //create the client only once
+    // Define the action client (true: we want to spin a thread)
+    ac_detection = new actionlib::SimpleActionClient<rgbd_object_detection::DetectObjectsAction>(TOPIC_DETECTION_NODE, true);
+
+    // Wait for the action server to come up
+    while(!ac_detection->waitForServer(ros::Duration(5.0))){
+      ROS_INFO("Waiting for ac_detection action server to come up");
+    }
+  }
+  //ROS_INFO("detection agent initialized ...");
+  while(counter_detection<3){
+    rgbd_object_detection::DetectObjectsGoal goal;
+    ac_detection->sendGoal(goal);
+    ac_detection->waitForResult();
+    counter_detection++;
+    if(ac_detection->getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+    { 
+      //ROS_INFO("cannot move the base for some reason (step 1)");
+      string param = "PNPconditionsBuffer/objGrasped";
+      handle.setParam(param, 1);
+      grasp_flag=0;
+      string param_grasp = "PNPconditionsBuffer/grasp_flag";
+      handle.setParam(param_grasp, grasp_flag);
+    }else{
+      counter_detection=0;
+      string param = "PNPconditionsBuffer/objGrasped";
+      handle.setParam(param, 0);
+      grasp_flag=1;
+      string param_grasp = "PNPconditionsBuffer/grasp_flag";
+      handle.setParam(param_grasp, grasp_flag);
+      return;
+      /*rgbd_object_detection::DetectObjectsResultConstPtr result;
+      result = ac_detection->getResult();
+      detected_objects = result->objects;*/
+    }
   }
 
 }
@@ -259,9 +313,9 @@ void RockinPNPActionServer::grasp(string params, bool *run) {
   //ROS_INFO("debug - line 2");
   goal.mode=1;
   //ROS_INFO("debug - line 3");
-  goal.cartesian_position.x=target.translation()(0);
+  goal.cartesian_position.x=target.translation()(0) - 0.02;
   //ROS_INFO("debug - line 4");
-  goal.cartesian_position.y=target.translation()(1) - 0.02;
+  goal.cartesian_position.y=target.translation()(1) - 0.03;
   //ROS_INFO("debug - line 5");
   goal.cartesian_position.z=target.translation()(2);
   //ROS_INFO("debug - line 6");
