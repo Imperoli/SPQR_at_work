@@ -22,6 +22,8 @@ RockinPNPActionServer::RockinPNPActionServer(ros::NodeHandle n) : PNPActionServe
     register_action("grasp",&RockinPNPActionServer::grasp,this);
     register_action("drop",&RockinPNPActionServer::drop,this);
     register_action("verifyGrasp",&RockinPNPActionServer::verifyGrasp,this);
+    register_action("detectPlane",&RockinPNPActionServer::detectPlane,this);
+    register_action("dropOnPlane",&RockinPNPActionServer::dropOnPlane,this);
 
     listener = new tf::TransformListener();
 
@@ -35,7 +37,7 @@ RockinPNPActionServer::RockinPNPActionServer(ros::NodeHandle n) : PNPActionServe
     PNP_cond_pub = handle.advertise<std_msgs::String>(TOPIC_PNPCONDITION, 100);
 
     computeTransformation("arm_base", "kinect_rgb_optical_frame", T_kinect2arm);
-  std::cout<<"T_kinect2arm:\n"<<T_kinect2arm.matrix()<<std::endl;
+  	std::cout<<"T_kinect2arm:\n"<<T_kinect2arm.matrix()<<std::endl;
 
 }
 

@@ -275,6 +275,16 @@ void RockinPNPActionServer::verifyGrasp(string params, bool *run) {
 
 }
 
+void RockinPNPActionServer::detectPlane(string params, bool *run) {
+  //to do...
+
+  //ricordiamoci di settare la variabile targetDetected a 1 o 0 nella rete di Petri quando la detection fallisce o va bene
+}
+
+void RockinPNPActionServer::dropOnPlane(string params, bool *run){
+  //to do...
+}
+
 void RockinPNPActionServer::grasp(string params, bool *run) {
   ROS_INFO("grasping started ...");
   if (ac_manipulation==NULL) { //create the client only once

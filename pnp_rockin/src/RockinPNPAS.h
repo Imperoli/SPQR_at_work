@@ -77,6 +77,8 @@ public:
     void drop(string params, bool *run);
     void init(string params, bool *run);
     void verifyGrasp(string params, bool *run);
+    void detectPlane(string params, bool *run);
+    void dropOnPlane(string params, bool *run);
 
     void do_move(float GX, float GY, float GTh_RAD, bool *run);
 
