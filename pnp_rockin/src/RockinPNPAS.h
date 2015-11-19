@@ -16,6 +16,20 @@
 
 #include <boost/thread/thread.hpp>
 
+//CHF headers
+#include <at_work_robot_example_ros/AttentionMessage.h>
+#include <at_work_robot_example_ros/BenchmarkState.h>
+#include <at_work_robot_example_ros/TriggeredConveyorBeltStatus.h>
+#include <at_work_robot_example_ros/DrillingMachineStatus.h>
+#include <at_work_robot_example_ros/Inventory.h>
+#include <at_work_robot_example_ros/OrderInfo.h>
+#include <at_work_robot_example_ros/BenchmarkFeedback.h>
+#include <at_work_robot_example_ros/TriggeredConveyorBeltCommand.h>
+#include <at_work_robot_example_ros/DrillingMachineCommand.h>
+#include <at_work_robot_example_ros/LoggingStatus.h>
+#include <at_work_robot_example_ros/Transaction.h>
+#include <at_work_robot_example_ros/RobotStatusReport.h>
+
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 
@@ -26,6 +40,14 @@ private:
     ros::Publisher event_pub, plantoexec_pub, hri_pub, rcom_pub;
     tf::TransformListener* listener;
 
+    //cfh subscribers
+    ros::Subscriber sub_cfh_inventory;
+    ros::Subscriber sub_cfh_order;
+    //ros::Subscriber sub_cfh_conveyor_belt_command;
+    ros::Subscriber sub_cfh_conveyor_belt_status;
+    //ros::Subscriber sub_cfh_drill_machine_status;
+    //ros::Subscriber sub_cfh_drilling_machine_command;
+
     // action clients
     actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> *ac_move;         //the action client for the movement planner
     actionlib::SimpleActionClient<rgbd_object_detection::DetectObjectsAction> *ac_detection;    //the action client for the detection phase
@@ -34,6 +56,7 @@ private:
     ros::Publisher PNP_cond_pub;
     
     boost::mutex mtx_movebase;
+    boost::mutex cfh_data_mtx;
 
     //detected objects array
     geometry_msgs::PoseArray detected_objects;
@@ -87,7 +110,12 @@ public:
      * CONDITIONS CALLBACKS
      */
 
-    
+    /*
+     * CFH CALLBACKS
+     */
+    void cb_cfh_inventory(const at_work_robot_example_ros::Inventory::ConstPtr& msg);
+    void cb_cfh_order(const at_work_robot_example_ros::OrderInfo::ConstPtr& msg);
+    void cb_cfh_conveyor_belt_status(const at_work_robot_example_ros::TriggeredConveyorBeltStatus::ConstPtr& msg);
 };
 
 #endif

@@ -146,9 +146,19 @@ void RockinPNPActionServer::read_items_from_cfh(std::map<std::string, std::strin
 
 void RockinPNPActionServer::init(string params, bool *run)
 {
-  read_workstations_locations(workstations);
-  read_orders_from_cfh(/*mesg from cfh*/ orders);
-  read_items_from_cfh(/*mesg from cfh*/ items_state);
+  //WORK WITH CFH
+  ros::Rate loop_rate(10);
+  cfh_data_mtx.lock();
+  while(workstations.size()==0 || orders.size()==0 || items_state.size()==0){
+    cfh_data_mtx.unlock();
+    loop_rate.sleep();
+    cfh_data_mtx.lock();
+  }
+  cfh_data_mtx.unlock();
+  //WORK IN DEBUG
+  /*read_workstations_locations(workstations);
+  read_orders_from_cfh(orders);
+  read_items_from_cfh(items_state);*/
   orders_index=0;
   grasp_flag=1;
   string param_grasp = "PNPconditionsBuffer/grasp_flag";
@@ -490,3 +500,41 @@ void RockinPNPActionServer::do_move(float GX, float GY, float GTh_RAD, bool *run
 
   mtx_movebase.unlock();
 }
+
+//###################### CHF CALLBACKS ####################//
+void RockinPNPActionServer::cb_cfh_inventory(const at_work_robot_example_ros::Inventory::ConstPtr& msg)
+{
+  ROS_INFO("cb_cfh_inventory called...");
+  /*for (int i = 0; i < msg->items.size(); ++i)
+  {
+     
+  }*/
+  sub_cfh_inventory.shutdown();
+}
+
+void RockinPNPActionServer::cb_cfh_order(const at_work_robot_example_ros::OrderInfo::ConstPtr& msg)
+{
+  ROS_INFO("cb_cfh_order called...");
+  sub_cfh_order.shutdown();
+}
+
+/*void RockinPNPActionServer::cb_cfh_conveyor_belt_command(const sensor_msgs::LaserScan::ConstPtr& msg)
+{
+  ROS_INFO("cb_cfh_conveyor_belt_command called...");
+}*/
+
+void RockinPNPActionServer::cb_cfh_conveyor_belt_status(const at_work_robot_example_ros::TriggeredConveyorBeltStatus::ConstPtr& msg)
+{
+  ROS_INFO("sub_cfh_conveyor_belt_status called...");
+  sub_cfh_conveyor_belt_status.shutdown();
+}
+
+/*void RockinPNPActionServer::cb_drill_machine_status(const sensor_msgs::LaserScan::ConstPtr& msg)
+{
+  ROS_INFO("cb_drill_machine_status called...");
+}*/
+
+/*void RockinPNPActionServer::cb_drilling_machine_command(const sensor_msgs::LaserScan::ConstPtr& msg)
+{
+  ROS_INFO("cb_drilling_machine_command called...");
+}*/

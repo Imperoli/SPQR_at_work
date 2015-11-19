@@ -15,6 +15,15 @@ RockinPNPActionServer::RockinPNPActionServer(ros::NodeHandle n) : PNPActionServe
     plantoexec_pub = handle.advertise<std_msgs::String>(TOPIC_PLANTOEXEC, 100);
     //rcom_pub= handle.advertise<tcp_interface::RCOMMessage>(TOPIC_RCOMMESSAGE,10);
 
+    //cfh subscribers initialization
+    sub_cfh_inventory = handle.subscribe(TOPIC_CFH_INVENTORY, 1, &RockinPNPActionServer::cb_cfh_inventory, this);
+    sub_cfh_order = handle.subscribe(TOPIC_CFH_ORDER, 1, &RockinPNPActionServer::cb_cfh_order, this);
+    //sub_cfh_conveyor_belt_command = handle.subscribe(TOPIC_CFH_CONVEYOR_BELT_COMMAND, 1, &RockinPNPActionServer::cb_cfh_conveyor_belt_command);
+    sub_cfh_conveyor_belt_status = handle.subscribe(TOPIC_CFH_CONVEYOR_BELT_STATUS, 1, &RockinPNPActionServer::cb_cfh_conveyor_belt_status, this);
+    //sub_cfh_drill_machine_status = handle.subscribe(TOPIC_CFH_DRILL_MACHINE_STATUS, 1, &RockinPNPActionServer::cb_drill_machine_status);
+    //sub_cfh_drilling_machine_command = handle.subscribe(TOPIC_CFH_DRILLING_MACHINE_COMMAND, 1, &RockinPNPActionServer::cb_drilling_machine_command);
+
+    //pnp registering actions
     register_action("init",&RockinPNPActionServer::init,this);
     register_action("wait",&RockinPNPActionServer::wait,this);
     register_action("move",&RockinPNPActionServer::move,this);

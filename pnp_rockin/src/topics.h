@@ -21,4 +21,13 @@
 
 #define TOPIC_RCOMMESSAGE "/RCOMMessage"
 
+//cfh topics
+#define TOPIC_CFH_INVENTORY "/robot_example_ros/inventory"
+#define TOPIC_CFH_ORDER "/robot_example_ros/order_info"
+#define TOPIC_CFH_CONVEYOR_BELT_COMMAND "/robot_example_ros/conveyor_belt_command"
+#define TOPIC_CFH_CONVEYOR_BELT_STATUS "/robot_example_ros/conveyor_belt_status"
+#define TOPIC_CFH_DRILL_MACHINE_STATUS "/robot_example_ros/drill_machine_status"
+#define TOPIC_CFH_DRILLING_MACHINE_COMMAND "/robot_example_ros/drilling_machine_command"
+
+
 #endif
