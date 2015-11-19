@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/freelist/RoCKin2015/repo/SPQR_at_work/grasping_check/src/grasping_check.cpp
+iostream
+-
+stdexcept
+-
+grasping_check.h
+/home/freelist/RoCKin2015/repo/SPQR_at_work/grasping_check/src/grasping_check.h
+
+/home/freelist/RoCKin2015/repo/SPQR_at_work/grasping_check/src/grasping_check.h
+opencv2/opencv.hpp
+-
+
+/home/freelist/RoCKin2015/repo/SPQR_at_work/grasping_check/src/main.cpp
+grasping_check.h
+/home/freelist/RoCKin2015/repo/SPQR_at_work/grasping_check/src/grasping_check.h
+

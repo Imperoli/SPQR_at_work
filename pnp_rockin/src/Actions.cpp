@@ -3,6 +3,8 @@
 
 #include "RockinPNPAS.h"
 #include "topics.h"
+#include <string>
+#include <sstream>
 
 #include <math.h>
 #include <tf_conversions/tf_eigen.h>
@@ -13,6 +15,16 @@
 
 
 using namespace std;
+
+namespace patch
+{
+    template < typename T > std::string to_string( const T& n )
+    {
+        std::ostringstream stm ;
+        stm << n ;
+        return stm.str() ;
+    }
+}
 
 bool RockinPNPActionServer::getRobotPose(std::string robotname, double &x, double &y, double &th_rad) {
     if (listener==NULL) {
@@ -505,11 +517,17 @@ void RockinPNPActionServer::do_move(float GX, float GY, float GTh_RAD, bool *run
 void RockinPNPActionServer::cb_cfh_inventory(const at_work_robot_example_ros::Inventory::ConstPtr& msg)
 {
   ROS_INFO("cb_cfh_inventory called...");
-  /*for (int i = 0; i < msg->items.size(); ++i)
+  for (int i = 0; i < msg->items.size(); ++i)
   {
-     
-  }*/
+     items_state.insert(std::pair<std::string, std::string>(msg->items[i].object.description.data.substr(0, 4) + "-" + patch::to_string((int)msg->items[i].location.instance_id.data),msg->items[i].location.description.data));
+  }
   sub_cfh_inventory.shutdown();
+  ROS_INFO("intems_state initialized...");
+  for (int i = 0; i < msg->items.size(); ++i)
+  {
+     //ROS_INFO("item: " + items_state[i].first + " location: " + items_state[i].second);
+     std::cout<<"location: "<<items_state[msg->items[i].object.description.data.substr(0, 4) + "-" + patch::to_string((int)msg->items[i].location.instance_id.data)]<<std::endl;
+  }
 }
 
 void RockinPNPActionServer::cb_cfh_order(const at_work_robot_example_ros::OrderInfo::ConstPtr& msg)
