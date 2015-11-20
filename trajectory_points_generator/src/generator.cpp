@@ -57,7 +57,7 @@ int main(int argc, char** argv)
     std::vector<geometry_msgs::Pose> points;
     points = generate_points(type);
 
-    points_pub = node.advertise<geometry_msgs::Pose>("path_points",100);
+    points_pub = node.advertise<geometry_msgs::Pose>("path_points",1);
 
     for(std::vector<geometry_msgs::Pose>::iterator it = points.begin(); it != points.end(); ++it){
          geometry_msgs::Pose p = *it;

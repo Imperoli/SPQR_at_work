@@ -2,6 +2,7 @@
 
 	<node pkg="tf" type="static_transform_publisher" name="arm_base" args="0.143 0 0.046 0 0 0 1 /base_link /arm_base 100" />		
 	<!--node pkg="tf" type="static_transform_publisher" name="camera_rgb_optical_frame" args="-0.3483 -0.01316162 0.643236 0.228405 0.326475 -0.502927 0.767014 /arm_base /kinect_link 100" /-->
+	<node pkg="tf" type="static_transform_publisher" name="camera_rgb_optical_frame" args="-0.3483 -0.038162 0.63074 0.22545 0.32304 -0.49897 0.77191 /arm_base /kinect_link 100" />
 	<node pkg="tf" type="static_transform_publisher" name="ee_edge_frame" args="0.01 0 0 0 0 0 1 /end_effector /end_effector_edge 100" />
   <node pkg="tf" type="static_transform_publisher" name="arm_camera_frame" args="-0.0948032 -0.080637 0.00759732 0.0340314 0.720582 -0.022173 0.692179 /end_effector_edge /arm_camera_frame 100" />
 	

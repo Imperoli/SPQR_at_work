@@ -333,10 +333,10 @@ int main(int argc, char** argv)
   nh.param("tables_topic",tables_topic,std::string("/table_array"));
   nh.param("rgb_optical_frame",rgb_optical_frame,std::string("kinect_rgb_optical_frame"));
   nh.param("arm_base_frame",arm_base_frame,std::string("arm_base"));
-  nh.param("table_z_offset",table_z_offset,(double) 0.0); // [m] w.r.t. arm_base reference frame
-  nh.param("table_max_z",table_max_z,0.2);
+  nh.param("table_z_offset",table_z_offset,(double) -0.05); // [m] w.r.t. arm_base reference frame
+  nh.param("table_max_z",table_max_z,0.1);
   nh.param("table_inclination_threshold",table_inclination_threshold,0.9); // between 0 and 1: 1 means that the table normal has to be parallel to the z axis of the arm_base frame
-  nh.param("max_object_z_displacement",max_object_z_displacement,0.2); // [m] from the table
+  nh.param("max_object_z_displacement",max_object_z_displacement,0.15); // [m] from the table
   
   std::cerr<<"object detection action server"<<std::endl;
   std::cerr<<"cluster_topic: "<<clusters_topic<<std::endl;

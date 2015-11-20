@@ -1,0 +1,20 @@
+image_width: 1920
+image_height: 1200
+camera_name: arm_camera_frame
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [1457.845746, 0, 979.39066, 0, 1371.01823, 633.79483, 0, 0, 1]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [-0.154272, 0.09142, -0.009540999999999999, -0.002034, 0]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1, 0, 0, 0, 1, 0, 0, 0, 1]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [1381.92749, 0, 975.565646, 0, 0, 1333.777466, 626.678885, 0, 0, 0, 1, 0]
