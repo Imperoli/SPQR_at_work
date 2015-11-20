@@ -55,10 +55,12 @@ include_directories(
 
 ## Declare a cpp executable
 
+  add_executable(kinect_base_calib src/kinect_base_calib.cpp)
   add_executable(kinect_arm_calib src/kinect_arm_calib.cpp)
   add_executable(camera_arm_calib src/camera_arm_calib.cpp)
  
 #add_dependencies(planner_main ${PROJECT_NAME}_generate_messages_cpp ${catkin_EXPORTED_TARGETS})
+target_link_libraries(kinect_base_calib ${catkin_LIBRARIES})
 target_link_libraries(camera_arm_calib ${catkin_LIBRARIES})
 target_link_libraries(kinect_arm_calib ${catkin_LIBRARIES})
 

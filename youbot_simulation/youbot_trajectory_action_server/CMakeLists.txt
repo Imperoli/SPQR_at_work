@@ -4,14 +4,19 @@ project(youbot_trajectory_action_server)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+
+find_package(Eigen3 REQUIRED)
+
 find_package(catkin REQUIRED COMPONENTS
   actionlib
   brics_actuator
   control_msgs
-  orocos_kdl
+  #orocos_kdl
   roscpp
   sensor_msgs
 )
+
+find_package(orocos_kdl REQUIRED)
 
 find_package(Boost REQUIRED COMPONENTS thread date_time filesystem system)
 
@@ -32,6 +37,8 @@ catkin_package(
 # include_directories(include)
 include_directories(include
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIRS}
+/usr/include/eigen3/
 )
 
 add_library(youbot_trajectory_action_server
