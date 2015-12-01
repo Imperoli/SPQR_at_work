@@ -20,7 +20,7 @@ RockinPNPActionServer::RockinPNPActionServer(ros::NodeHandle n) : PNPActionServe
     sub_cfh_inventory = handle.subscribe(TOPIC_CFH_INVENTORY, 1, &RockinPNPActionServer::cb_cfh_inventory, this);
     sub_cfh_order = handle.subscribe(TOPIC_CFH_ORDER, 1, &RockinPNPActionServer::cb_cfh_order, this);
     //sub_cfh_conveyor_belt_command = handle.subscribe(TOPIC_CFH_CONVEYOR_BELT_COMMAND, 1, &RockinPNPActionServer::cb_cfh_conveyor_belt_command);
-    //sub_cfh_conveyor_belt_status = handle.subscribe(TOPIC_CFH_CONVEYOR_BELT_STATUS, 1, &RockinPNPActionServer::cb_cfh_conveyor_belt_status, this);
+    sub_cfh_conveyor_belt_status = handle.subscribe(TOPIC_CFH_CONVEYOR_BELT_STATUS, 1, &RockinPNPActionServer::cb_cfh_conveyor_belt_status, this);
     //sub_cfh_drill_machine_status = handle.subscribe(TOPIC_CFH_DRILL_MACHINE_STATUS, 1, &RockinPNPActionServer::cb_drill_machine_status);
     //sub_cfh_drilling_machine_command = handle.subscribe(TOPIC_CFH_DRILLING_MACHINE_COMMAND, 1, &RockinPNPActionServer::cb_drilling_machine_command);
     sub_cfh_benchmark_state = handle.subscribe(TOPIC_CFH_BENCHMARK_STATE, 1, &RockinPNPActionServer::cb_cfh_benchmark_state, this);
@@ -44,20 +44,18 @@ RockinPNPActionServer::RockinPNPActionServer(ros::NodeHandle n) : PNPActionServe
 
     //counter for detection
     counter_detection=0;
-
-    order_index=0;
+    counter_verify_grasp=0;
 
     //bring biring_box
-    //bring_biring_box = true;
+    bring_biring_box = true;
+
+    call_flag=true;
 
     //tools_idx
-    //tools_idx = 1;
+    tools_idx = 0;
 
-    //start_plan
     start_plan=true;
-    stop_plan=false;
-
-    //counter_movements=0;
+    stop_plan = true;
 
     //output debug
     out_debug = true;

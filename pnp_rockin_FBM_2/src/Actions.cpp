@@ -131,25 +131,25 @@ void RockinPNPActionServer::read_workstations_locations(std::map<std::string, Ei
   ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation2",Eigen::Vector3f(-4.30,-2.95,0.0)));
   ws.insert(std::pair<std::string, Eigen::Vector3f>("Workstation3",Eigen::Vector3f(-2.80,-2.65,(3.14159/2))));*/
   //verso ws1 aumenta Y; verso ws2 diminuisce Y; verso ws3 aumenta X
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-01",Eigen::Vector3f(-12.308,-13.303,0))); //OK sx-drilling p[-12.308;-13.303;0]o[0;0;0.013;0.999]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-02",Eigen::Vector3f(-12.954,-13.314,0))); //OK dx-drilling p[-12.954;-13.314;0]o[0;0;0.020;0.999]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-03",Eigen::Vector3f(-13.599,-8.372,(-3.1415)))); //OK sx-fitting p[-13.599;-8.372;0]o[0;0;0.999;-0.038] 
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-04",Eigen::Vector3f(-13.061,-8.349,(-3.1415)))); //OK dx-fitting p[-13.061;-8.349;0]o[0;0;0.998;-0.049]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-05",Eigen::Vector3f(-10.96,-10.66,(3.1415/2)))); //OK sx-central p[-10.96;-10.66;0]o[0;0;0.729;0.683]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-06",Eigen::Vector3f(-10.949,-10.91,(3.1415/2)))); //OK cr-central p[-10.949;-10.91;0]o[0;0;0.723;0.690]      
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-07",Eigen::Vector3f(-10.938,-11.165,(3.1415/2)))); //OK dx-central p[-10.938;-11.165;0]o[0;0;0.727;0.685]      
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-01",Eigen::Vector3f(-13.661,-12.325,(-3.1415/2)))); //p[-13.661;-12.325;0]o[0;0;-0.691;0.722]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-02",Eigen::Vector3f(-13.675,-12.028,(-3.1415/2)))); //p[-13.675;-12.028;0]o[0;0;-0.678;0.734]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-03",Eigen::Vector3f(-13.704,-11.789,(-3.1415/2)))); //p[-13.704;-11.789;0]o[0;0;-0.683;0.730]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-04",Eigen::Vector3f(-13.766,-11.428,(-3.1415/2)))); //p[-13.766;-11.428;0]o[0;0;-0.683;0.730]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-05",Eigen::Vector3f(-13.786,-11.204,(-3.1415/2)))); //p[-13.786;-11.204;0]o[0;0;-0.680;0.733]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-06",Eigen::Vector3f(-13.775,-10.946,(-3.1415/2)))); //p[-13.775;-10.946;0]o[0;0;-0.669;0.742]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-07",Eigen::Vector3f(-13.761,-10.594,(-3.1415/2)))); //p[-13.811;-10.594;0]o[0;0;-0.671;0.741]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-08",Eigen::Vector3f(-13.814,-10.345,(-3.1415/2)))); //p[-13.814;-10.345;0]o[0;0;-0.675;0.737]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-09",Eigen::Vector3f(-13.820,-10.077,(-3.1415/2)))); //p[-13.820;-10.077;0]o[0;0;-0.667;0.744]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-10",Eigen::Vector3f(-13.835,-9.722,(-3.1415/2)))); //p[-13.835;-9.722;0]o[0;0;-0.670;0.741]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-11",Eigen::Vector3f(-13.858,-9.474,(-3.1415/2)))); //p[-13.858;-9.474;0]o[0;0;-0.666;0.745]
-  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-12",Eigen::Vector3f(-13.911,-9.195,(-3.1415/2)))); //p[-13.911;-9.195;0]o[0;0;-0.664;0.747]
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-01",Eigen::Vector3f(-1.092718, -1.579077, -1.626382))); 
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-02",Eigen::Vector3f(-1.615182, -1.559591, -1.596587))); 
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-03",Eigen::Vector3f(-2.391921, 3.185186, 1.524752)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-04",Eigen::Vector3f(-1.843098, 3.166767, 1.534059)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-05",Eigen::Vector3f(0.187819, 1.077987, 0.007680)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-06",Eigen::Vector3f(0.189432, 0.806119, -0.009547)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("WORKSTATION-07",Eigen::Vector3f(0.184023, 0.484868, 0.018800)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-01",Eigen::Vector3f(-2.283176, -0.748615, 3.138756))); 
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-02",Eigen::Vector3f(-2.297204, -0.477632, -3.118710))); 
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-03",Eigen::Vector3f(-2.315036, -0.189135, -3.129054)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-04",Eigen::Vector3f(-2.354975, 0.151228, -3.139329)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-05",Eigen::Vector3f(-2.355564, 0.449728, -3.141372))); 
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-06",Eigen::Vector3f(-2.376518, 0.714417, -3.121222))); 
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-07",Eigen::Vector3f(-2.384502, 1.050055, -3.123620)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-08",Eigen::Vector3f(-2.378166, 1.300049, 3.134166)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-09",Eigen::Vector3f(-2.399218, 1.589414, 3.140204))); 
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-07",Eigen::Vector3f(-2.410785, 1.941518, 3.140511)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-08",Eigen::Vector3f(-2.413331, 2.207622, 3.132902)));
+  ws.insert(std::pair<std::string, Eigen::Vector3f>("SHELF-09",Eigen::Vector3f(-2.434230, 2.472541, 3.132413)));
 }
 
 void RockinPNPActionServer::read_orders_from_cfh(std::vector<std::pair<std::string, std::string> >& o)
@@ -176,34 +176,18 @@ void RockinPNPActionServer::init(string params, bool *run)
 {
   //WORK WITH CFH
   ros::Rate loop_rate(10);
-  
-  /*cfh_data_mtx.lock();
-  
+  cfh_data_mtx.lock();
   while(workstations.size()==0 || orders.size()==0 || items_state.items.size()==0){
-  	ROS_INFO("initialization");
     cfh_data_mtx.unlock();
     loop_rate.sleep();
     cfh_data_mtx.lock();
-    //break;
   }
-  cfh_data_mtx.unlock();*/
+  cfh_data_mtx.unlock();
   //WORK IN DEBUG
-  read_workstations_locations(workstations);
-  /*read_orders_from_cfh(orders);
+  /*read_workstations_locations(workstations);
+  read_orders_from_cfh(orders);
   read_items_from_cfh(items_state);*/
-
-  order_vector.clear();
-  order_vector.push_back(container_location);
-  for(int i=0; i<objects_location.size(); i++){
-  	order_vector.push_back(objects_location[i]);
-  	std::cout<<order_vector[i]<<std::endl;
-  	std::cout<<i<<std::endl;
-  }
-  std::cout<<order_vector.size()<<std::endl;
-  std::cout<<objects_location.size()<<std::endl;
-
-  ROS_INFO("initialized");
-  order_index=0;
+  orders_index=0;
   grasp_flag=1;
   string param_grasp = "PNPconditionsBuffer/grasp_flag";
   handle.setParam(param_grasp, grasp_flag);
@@ -211,24 +195,39 @@ void RockinPNPActionServer::init(string params, bool *run)
 
 void RockinPNPActionServer::move(string params, bool *run) {
   ROS_INFO("move started ...");
-  //std::cout<<"order_index: "<<order_index<<std::endl;
-  //std::cout<<"grasp_flag: "<<grasp_flag<<std::endl;
+  
   if(grasp_flag==1){
+    //to do...
+    //std::string obj=orders[orders_index].first;
+    if(bring_biring_box){
+      std::string dest;
+      for (int i = 0; i < items_state.items.size(); ++i)
+      {
+        if((int)items_state.items[i].object.type.data == 2){
+          for(int j=0;j<orders.size();j++){
+            if(items_state.items[i].object.description.data == orders[j].object.description.data){
+              dest = orders[j].destination.description.data;
+              biring_box_loc = dest;
+            }
+          }
+        }
+      }
+      Eigen::Vector3f loc; loc=workstations[dest];
+      do_move(loc(0),loc(1),loc(2),run);
+      bring_biring_box = false;
+    }
+    else{
+      std::string dest;
+      for (int i = 0; i < items_state.items.size(); ++i)
+      {
 
-	  Eigen::Vector3f loc; loc=workstations[order_vector[order_index]];
-	  do_move(loc(0),loc(1),loc(2),run);	//DEBUG
-	  //string param = "PNPconditionsBuffer/goalReached"; //DEBUG
-	  //handle.setParam(param, 1); //DEBUG
-	  //std::cout<<"Moving to: "<<order_vector[order_index]<<std::endl;
-
-    //grasp_flag=0;	//DEBUG
+      }
+      Eigen::Vector3f loc; loc=workstations[dest];
+      do_move(loc(0),loc(1),loc(2),run);
+    }
   }else{
-  	std::cout<<"Moving to: "<<container_destination<<std::endl;
-    Eigen::Vector3f loc; loc=workstations[container_destination];
-    do_move(loc(0),loc(1),loc(2),run); //DEBUG
-    //string param = "PNPconditionsBuffer/goalReached"; //DEBUG
-    //handle.setParam(param, 1); //DEBUG
-    //grasp_flag=1;	//DEBUG
+    Eigen::Vector3f loc; loc=workstations[biring_box_loc];
+    do_move(loc(0),loc(1),loc(2),run);
   }
   /*float GX,GY,Gtheta;
   if (getLocationPosition(params,GX,GY,Gtheta)) {
@@ -249,10 +248,6 @@ void RockinPNPActionServer::wait(string params, bool *run)
 */
     ROS_INFO("Just waiting ...");
     ros::Duration(5).sleep();
-   // if(grasp_flag)
-    //	order_index++;
-    
-    
 /*
     if (*run)
         ROS_INFO("### Finished Wait");
@@ -291,22 +286,19 @@ void RockinPNPActionServer::detection(string params, bool *run) {
       rgbd_object_detection::DetectObjectsResultConstPtr result;
       result = ac_detection->getResult();
 
-      std::vector<Eigen::Affine3d> poses;
-      PoseArrayToEigen(result->objects,poses);
-      //detected_objects = result->objects;
-      for(int i=0; i<poses.size();++i){
+      /*std::vector<Eigen::Affine3d> poses;
+      PoseArrayToEigen(result->objects,poses);*/
+      detected_objects = result->objects;
+      string param = "PNPconditionsBuffer/objDetected";
+      handle.setParam(param, 1);
+      /*for(int i=0; i<poses.size();++i){
         poses[i]=T_kinect2arm*poses[i];
-        if(poses[i].translation()(0)<=0.0 && poses[i].translation()(0)>=-0.20 && poses[i].translation()(1)>=-0.45){
+        if(poses[i].translation()(0)<=0.0 && poses[i].translation()(0)>=-0.20 && poses[i].translation()(1)>=-0.4){
           detected_objects.poses.push_back(result->objects.poses[i]);
           string param = "PNPconditionsBuffer/objDetected";
           handle.setParam(param, 1);
         }
-      }
-      if(detected_objects.poses.size()==0)
-      {
-      	string param2 = "PNPconditionsBuffer/objDetected";
-        handle.setParam(param2, 0);
-      }
+      }*/
       return;
     }
   }
@@ -328,7 +320,9 @@ void RockinPNPActionServer::verifyGrasp(string params, bool *run) {
     }
   }
   //ROS_INFO("detection agent initialized ...");
-  while(counter_detection<3){
+  ros::Rate lr(10);
+  //ros::Rate sleeper(0.2);
+  while(counter_detection<3 && feedbackToCFH.grasp_notification.data==false){
     rgbd_object_detection::DetectObjectsGoal goal;
     ac_detection->sendGoal(goal);
     ac_detection->waitForResult();
@@ -336,44 +330,57 @@ void RockinPNPActionServer::verifyGrasp(string params, bool *run) {
     if(ac_detection->getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
     { 
       //ROS_INFO("cannot move the base for some reason (step 1)");
+      //feedbackToCFH.phase_to_terminate.data = 2;
+      //sleeper.sleep();
+      sleep(4);
+      //while(true){
+      call_flag=false;
+      for(int h=0;h<20;h++){
+        feedbackToCFH.phase_to_terminate.data = 0;
+        feedbackToCFH.grasp_notification.data = true;
+        feedback_pub.publish(feedbackToCFH);
+        lr.sleep();
+      }
+      call_flag=true;
       string param = "PNPconditionsBuffer/objGrasped";
       handle.setParam(param, 1);
       grasp_flag=0;
       string param_grasp = "PNPconditionsBuffer/grasp_flag";
       handle.setParam(param_grasp, grasp_flag);
     }else{
-      
-      rgbd_object_detection::DetectObjectsResultConstPtr result;
-      result = ac_detection->getResult();
-
-      std::vector<Eigen::Affine3d> poses;
-      PoseArrayToEigen(result->objects,poses);
-      //detected_objects = result->objects;
-      for(int i=0; i<poses.size();++i){
-        poses[i]=T_kinect2arm*poses[i];
-        if(poses[i].translation()(0)<=0.0 && poses[i].translation()(0)>=-0.20 && poses[i].translation()(1)>=-0.475){
-        	counter_detection=0;
-          //detected_objects.poses.push_back(result->objects.poses[i]);
-          string param = "PNPconditionsBuffer/objGrasped";
-          handle.setParam(param, 0);
-          grasp_flag=1;
-          string param_grasp = "PNPconditionsBuffer/grasp_flag";
-      	  handle.setParam(param_grasp, grasp_flag);
-          return;
+      if(counter_verify_grasp>=3){
+        //feedbackToCFH.phase_to_terminate.data = 2;
+        //while(true){
+        call_flag=false;
+        for(int h=0;h<20;h++){
+          feedbackToCFH.phase_to_terminate.data = 0;
+          feedbackToCFH.grasp_notification.data = false;
+          feedback_pub.publish(feedbackToCFH);
+          lr.sleep();
         }
+        call_flag=true;
+        std_msgs::String msg2; msg2.data="stop";
+        plantoexec_pub.publish(msg2); 
+        start_plan = true;
+        stop_plan=false;
       }
-	  	string param2 = "PNPconditionsBuffer/objGrasped";
-	    handle.setParam(param2, 1);
-	    grasp_flag=0;
-      string param_grasp2 = "PNPconditionsBuffer/grasp_flag";
-      handle.setParam(param_grasp2, grasp_flag);
-
-      /*string param = "PNPconditionsBuffer/objGrasped";
-      handle.setParam(param, 0);
-      grasp_flag=1;
-      string param_grasp = "PNPconditionsBuffer/grasp_flag";
-      handle.setParam(param_grasp, grasp_flag);
-      return;*/
+      /*feedbackToCFH.phase_to_terminate.data = 2;
+      feedbackToCFH.grasp_notification.data = true;
+      feedback_pub.publish(feedbackToCFH);*/
+      if(!feedbackToCFH.grasp_notification.data){
+        counter_detection=0;
+        string param = "PNPconditionsBuffer/objGrasped";
+        handle.setParam(param, 0);
+        grasp_flag=1;
+        string param_grasp = "PNPconditionsBuffer/grasp_flag";
+        handle.setParam(param_grasp, grasp_flag);
+      }
+      else{
+        counter_detection=0;
+        string param = "PNPconditionsBuffer/objGrasped";
+        handle.setParam(param, 0);
+      }
+      return;
       /*rgbd_object_detection::DetectObjectsResultConstPtr result;
       result = ac_detection->getResult();
       detected_objects = result->objects;*/
@@ -393,6 +400,17 @@ void RockinPNPActionServer::dropOnPlane(string params, bool *run){
 }
 
 void RockinPNPActionServer::grasp(string params, bool *run) {
+  if(counter_verify_grasp>=5){
+    ROS_INFO("PD ...");
+    feedbackToCFH.grasp_notification.data = false;
+    feedback_pub.publish(feedbackToCFH);
+    std_msgs::String msg2; msg2.data="stop";
+    plantoexec_pub.publish(msg2); 
+    start_plan = true;
+    stop_plan=false;
+    return;
+  }
+  counter_verify_grasp++;
   ROS_INFO("grasping started ...");
   if (ac_manipulation==NULL) { //create the client only once
     // Define the action client (true: we want to spin a thread)
@@ -430,11 +448,11 @@ void RockinPNPActionServer::grasp(string params, bool *run) {
   //ROS_INFO("debug - line 2");
   goal.mode=1;
   //ROS_INFO("debug - line 3");
-  goal.cartesian_position.x=target.translation()(0) - 0.01;
+  goal.cartesian_position.x=target.translation()(0);
   //ROS_INFO("debug - line 4");
   goal.cartesian_position.y=target.translation()(1) - 0.03;
   //ROS_INFO("debug - line 5");
-  goal.cartesian_position.z=target.translation()(2) + 0.0125;
+  goal.cartesian_position.z=target.translation()(2) + 0.01;
   //ROS_INFO("debug - line 6");
   goal.gripper_roll=1;
   //ROS_INFO("debug - line 7");
@@ -486,7 +504,7 @@ void RockinPNPActionServer::drop(string params, bool *run) {
     handle.setParam(param, 0);
     return;
   }*/
-  Eigen::Vector3d target(-.1,-.4, .025);
+  Eigen::Vector3d target(0,-.5, .2);
   //ROS_INFO("debug - line 2");
   goal.mode=2;
   //ROS_INFO("debug - line 3");
@@ -519,18 +537,20 @@ void RockinPNPActionServer::drop(string params, bool *run) {
     grasp_flag=1;
     string param_grasp = "PNPconditionsBuffer/grasp_flag";
     handle.setParam(param_grasp, grasp_flag);
-	  order_index++;
-	  if(order_index>=order_vector.size())
-	  {
-	    std_msgs::String msg; msg.data="stop";
-	    plantoexec_pub.publish(msg);
-	  }
+    if(!bring_biring_box){
+      tools_idx++;
+      if(tools_idx>=orders.size()-1)
+      {
+        std_msgs::String msg; msg.data="stop";
+        plantoexec_pub.publish(msg);
+      }
+    }
   }
 }
 
 void RockinPNPActionServer::do_move(float GX, float GY, float GTh_RAD, bool *run) { // theta in degrees
   ROS_INFO("do_move started");
-  //mtx_movebase.lock();
+  mtx_movebase.lock();
 
   if (ac_move==NULL) { //create the client only once
     // Define the action client (true: we want to spin a thread)
@@ -593,56 +613,47 @@ void RockinPNPActionServer::do_move(float GX, float GY, float GTh_RAD, bool *run
 #endif
 
   // Cancel all goals (NEEDED TO ISSUE NEW GOALS LATER)
-  /*ac_move->cancelAllGoals(); ros::Duration(0.2).sleep(); // wait a little
+  ac_move->cancelAllGoals(); ros::Duration(0.2).sleep(); // wait a little
 
-  mtx_movebase.unlock();*/
+  mtx_movebase.unlock();
 }
 
 //###################### CHF CALLBACKS ####################//
 void RockinPNPActionServer::cb_cfh_inventory(const at_work_robot_example_ros::Inventory::ConstPtr& msg)
 {
   ROS_INFO("cb_cfh_inventory called...");
-  
-  	if(msg->items.size()>0){
-  		ROS_INFO("items size > 0");
-  		objects_location.clear();
-	  //items_state = *msg;
-  		for(int i=0; i<msg->items.size(); i++){
-  			if((int)msg->items[i].object.type.data==1)
-  				objects_location.push_back(msg->items[i].location.description.data);
-  			else
-  				container_location=msg->items[i].location.description.data;
-  		}
-  		if(!start_plan)
-	    	sub_cfh_inventory.shutdown();
-	}
-	ROS_INFO("debug line zzzzz");
+  items_state = *msg;
+  sub_cfh_inventory.shutdown();
   if(out_debug)
-    for (int i = 0; i < objects_location.size(); ++i)
+    for (int i = 0; i < items_state.items.size(); ++i)
     {
-      std::cout<<" location: "<<objects_location[i]<<std::endl;
+      std::cout<<"obj: "<<items_state.items[i].object.description.data<<" location: "<<items_state.items[i].location.description.data<<std::endl;
     }
 }
 
 void RockinPNPActionServer::cb_cfh_order(const at_work_robot_example_ros::OrderInfo::ConstPtr& msg)
 {
   ROS_INFO("cb_cfh_order called...");
-  if(msg->orders.size()>0){
-	  for (int i = 0; i < msg->orders.size(); ++i)
-	  {
-	    if((int)msg->orders[i].object.type.data>1){
-	    	container_destination=msg->orders[i].destination.description.data;
-	    }
-	  }
-	  //orders = *msg;
-	  if(!start_plan)
-	  	sub_cfh_order.shutdown();
-	  /*if(out_debug)
-	    for (int i = 0; i < orders.size(); ++i)
-	    {
-	      std::cout<<"obj: "<<orders[i].object.description.data<<" destination: "<<orders[i].destination.description.data<<std::endl;
-	    }*/
+  for (int i = 0; i < msg->orders.size(); ++i)
+  {
+    if((int)msg->orders[i].quantity_requested.data>0){
+      for (int j = 0; j < (int)msg->orders[i].quantity_requested.data; ++j)
+      {
+        orders.push_back(msg->orders[i]);
+        tools_idx++;
+      }
+    }
+    else{
+      orders.push_back(msg->orders[i]);
+    }
   }
+  //orders = *msg;
+  sub_cfh_order.shutdown();
+  if(out_debug)
+    for (int i = 0; i < orders.size(); ++i)
+    {
+      std::cout<<"obj: "<<orders[i].object.description.data<<std::endl;
+    }
 }
 
 /*void RockinPNPActionServer::cb_cfh_conveyor_belt_command(const sensor_msgs::LaserScan::ConstPtr& msg)
@@ -650,33 +661,54 @@ void RockinPNPActionServer::cb_cfh_order(const at_work_robot_example_ros::OrderI
   ROS_INFO("cb_cfh_conveyor_belt_command called...");
 }*/
 
-/*void RockinPNPActionServer::cb_cfh_conveyor_belt_status(const at_work_robot_example_ros::TriggeredConveyorBeltStatus::ConstPtr& msg)
+void RockinPNPActionServer::cb_cfh_conveyor_belt_status(const at_work_robot_example_ros::TriggeredConveyorBeltStatus::ConstPtr& msg)
 {
   ROS_INFO("sub_cfh_conveyor_belt_status called...");
   sub_cfh_conveyor_belt_status.shutdown();
-}*/
+}
 
 void RockinPNPActionServer::cb_cfh_benchmark_state(const at_work_robot_example_ros::BenchmarkState::ConstPtr& msg)
 {
-	int phase = (int)msg->phase.data;
-	int state = (int)msg->state.data;
-	if(phase == at_work_robot_example_ros::BenchmarkState::EXECUTION && state == at_work_robot_example_ros::BenchmarkState::RUNNING && start_plan){
-		std_msgs::String msg2; msg2.data="task1";
+  int state = (int)msg->state.data;
+  int phase = (int)msg->phase.data;
+  if(call_flag){
+    if(state == 1 && phase == 0){
+      //launch the pnp
+      if(start_plan){
+        counter_verify_grasp=0;
+        feedbackToCFH.grasp_notification.data = false;
+        //feedbackToCFH.phase_to_terminate.data = 0;
+        //feedback_pub.publish(feedbackToCFH);
+        std_msgs::String msg2; msg2.data="detect_and_grasp";
         plantoexec_pub.publish(msg2);
-        ROS_INFO("plan_started");
-        start_plan=false;
+        start_plan = false;
         stop_plan=true;
-	}
-	if(phase == at_work_robot_example_ros::BenchmarkState::EXECUTION && state == at_work_robot_example_ros::BenchmarkState::STOPPED && stop_plan){	
-		std_msgs::String msg2; msg2.data="stop";
-        plantoexec_pub.publish(msg2);
-        ROS_INFO("plan_stopped");
+      }
+    }
+    else if(state==4 && phase==0){
+      //stop the plane
+      if(stop_plan){
+        counter_verify_grasp=0;
+        feedbackToCFH.phase_to_terminate.data = phase;
+        //feedback_pub.publish(feedbackToCFH);
+        std_msgs::String msg2; msg2.data="stop";
+        plantoexec_pub.publish(msg2); 
+        start_plan = true;
         stop_plan=false;
-        start_plan=true;
-        sub_cfh_inventory = handle.subscribe(TOPIC_CFH_INVENTORY, 1, &RockinPNPActionServer::cb_cfh_inventory, this);
-    	sub_cfh_order = handle.subscribe(TOPIC_CFH_ORDER, 1, &RockinPNPActionServer::cb_cfh_order, this);
-	}
-
+      }
+    }
+    else if(state==3 && phase==0){
+        if(stop_plan){
+        counter_verify_grasp=0;
+          feedbackToCFH.phase_to_terminate.data = phase;
+          //feedback_pub.publish(feedbackToCFH);
+          std_msgs::String msg2; msg2.data="stop";
+          plantoexec_pub.publish(msg2); 
+          start_plan = true;
+          stop_plan=false;
+        }
+    }
+  }
 }
 
 /*void RockinPNPActionServer::cb_drill_machine_status(const sensor_msgs::LaserScan::ConstPtr& msg)

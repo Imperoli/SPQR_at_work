@@ -37,17 +37,17 @@ class RockinPNPActionServer : public PNPActionServer
 {
 private:
     ros::NodeHandle handle, handlep;
-    ros::Publisher event_pub, plantoexec_pub, hri_pub, rcom_pub,feedback_pub;
+    ros::Publisher event_pub, plantoexec_pub, hri_pub, rcom_pub, feedback_pub;
     tf::TransformListener* listener;
 
     //cfh subscribers
     ros::Subscriber sub_cfh_inventory;
     ros::Subscriber sub_cfh_order;
-    ros::Subscriber sub_cfh_benchmark_state;
     //ros::Subscriber sub_cfh_conveyor_belt_command;
-    //ros::Subscriber sub_cfh_conveyor_belt_status;
+    ros::Subscriber sub_cfh_conveyor_belt_status;
     //ros::Subscriber sub_cfh_drill_machine_status;
     //ros::Subscriber sub_cfh_drilling_machine_command;
+    ros::Subscriber sub_cfh_benchmark_state;
     at_work_robot_example_ros::BenchmarkFeedback feedbackToCFH;
 
     // action clients
@@ -60,31 +60,25 @@ private:
     boost::mutex mtx_movebase;
     boost::mutex cfh_data_mtx;
 
-    //at_work_robot_example_ros::BenchmarkFeedback feedbackToCFH;
-
     //detected objects array
     geometry_msgs::PoseArray detected_objects;
 
     Eigen::Affine3d T_kinect2arm;
-    //at_work_robot_example_ros::Inventory items_state;
+    at_work_robot_example_ros::Inventory items_state;
     std::map<std::string, Eigen::Vector3f> workstations;
-    //std::vector<at_work_robot_example_ros::Order> orders;
-    //int orders_index;
+    std::vector<at_work_robot_example_ros::Order> orders;
+    int orders_index;
     int grasp_flag;
     int counter_detection;
     bool out_debug;
-   // bool bring_biring_box;
-    std::string container_location;
-    std::string container_destination;
-    std::vector<std::string> objects_location;
-    std::vector<std::string> order_vector;
-    int order_index;
-    //int tools_idx;
-
+    bool bring_biring_box;
+    std::string biring_box_loc;
+    int tools_idx;
     bool start_plan;
     bool stop_plan;
+    int counter_verify_grasp;
 
-    //int counter_movements;
+    int call_flag;
 
 public:
 
@@ -132,7 +126,7 @@ public:
      */
     void cb_cfh_inventory(const at_work_robot_example_ros::Inventory::ConstPtr& msg);
     void cb_cfh_order(const at_work_robot_example_ros::OrderInfo::ConstPtr& msg);
-    //void cb_cfh_conveyor_belt_status(const at_work_robot_example_ros::TriggeredConveyorBeltStatus::ConstPtr& msg);
+    void cb_cfh_conveyor_belt_status(const at_work_robot_example_ros::TriggeredConveyorBeltStatus::ConstPtr& msg);
     void cb_cfh_benchmark_state(const at_work_robot_example_ros::BenchmarkState::ConstPtr& msg);
 };
 
